@@ -60,8 +60,8 @@ const DEFAULT_PREFERENCES = {
   // duplicates for validation
   intervalValue: "0.1",
   intervalInput: "0.1",
-  minPaceValue: "2:52",
-  minPaceInput: "2:52",
+  minPaceValue: "2:51",
+  minPaceInput: "2:51",
   maxPaceValue: "8:34",
   maxPaceInput: "8:34",
 
