@@ -237,7 +237,17 @@ const PaceCalculator = () => {
 
     const data = [];
     const interval = getEffectiveInterval();
-    for (let kph = 7.0; kph <= 21.0; kph += interval) {
+
+    const paceModifier = paceUnit === "min/km" ? 1 : MILE_TO_KM;
+    const minPaceValueParsed = (60 / parsePace(minPaceValue)) * paceModifier;
+    const maxPaceValueParsed = (60 / parsePace(maxPaceValue)) * paceModifier;
+
+    console.log(minPaceValueParsed, maxPaceValueParsed, interval);
+    for (
+      let kph = maxPaceValueParsed;
+      kph <= minPaceValueParsed;
+      kph += interval
+    ) {
       kph = Number(kph.toFixed(3));
 
       const mph = kph * KM_TO_MILES;
@@ -257,7 +267,7 @@ const PaceCalculator = () => {
         : null;
 
       data.push({
-        kph,
+        kph: kph.toFixed(1),
         mph: mph.toFixed(1),
         minPerKm: formatPace(minPerKm * 60),
         minPerMile: formatPace(minPerMile * 60),
@@ -268,18 +278,14 @@ const PaceCalculator = () => {
       });
     }
     return data;
-  }, [intervalValue, intervalUnit, customDistance]);
-
-  const filteredData = useMemo(() => {
-    const minPaceValueParsed = parsePace(minPaceValue);
-    const maxPaceValueParsed = parsePace(maxPaceValue);
-
-    return paceData.filter((row) => {
-      const rowPace =
-        paceUnit === "min/km" ? row.minPerKmRaw : row.minPerMileRaw;
-      return rowPace >= minPaceValueParsed && rowPace <= maxPaceValueParsed;
-    });
-  }, [paceData, minPaceValue, maxPaceValue, paceUnit]);
+  }, [
+    intervalValue,
+    intervalUnit,
+    customDistance,
+    minPaceValue,
+    maxPaceValue,
+    paceUnit,
+  ]);
 
   return (
     <div className="w-full max-w-full space-y-4">
@@ -296,7 +302,7 @@ const PaceCalculator = () => {
               value={minPaceInput}
               onChange={(e) => handleMinPaceChange(e.target.value)}
               className={`border rounded px-2 py-1 w-24 ${
-                minPaceInput === minPaceValue ? 'bg-white' : 'bg-red-50'
+                minPaceInput === minPaceValue ? "bg-white" : "bg-red-50"
               }`}
             />
           </div>
@@ -310,7 +316,7 @@ const PaceCalculator = () => {
               value={maxPaceInput}
               onChange={(e) => handleMaxPaceChange(e.target.value)}
               className={`border rounded px-2 py-1 w-24 ${
-                maxPaceInput === maxPaceValue ? 'bg-white' : 'bg-red-50'
+                maxPaceInput === maxPaceValue ? "bg-white" : "bg-red-50"
               }`}
             />
           </div>
@@ -380,7 +386,7 @@ const PaceCalculator = () => {
             value={intervalInput}
             onChange={(e) => handleIntervalChange(e.target.value)}
             className={`border rounded px-2 py-1 w-24 ${
-              intervalInput === intervalValue ? 'bg-white' : 'bg-red-50'
+              intervalInput === intervalValue ? "bg-white" : "bg-red-50"
             }`}
           />
           <select
@@ -415,52 +421,57 @@ const PaceCalculator = () => {
         {/* Custom Distance */}
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-          <label className="flex items-center gap-2">
+            <label className="flex items-center gap-2">
+              <input
+                aria-label="Custom distance enable"
+                type="checkbox"
+                checked={customDistance.enabled}
+                onChange={(e) =>
+                  setCustomDistance((prev: CustomDistance) => ({
+                    ...prev,
+                    enabled: e.target.checked,
+                  }))
+                }
+              />
+              <span className="text-sm font-medium">Custom Distance:</span>
+            </label>
             <input
-              aria-label="Custom distance enable"
-              type="checkbox"
-              checked={customDistance.enabled}
+              aria-label="Custom distance value"
+              type="number"
+              min="0.1"
+              value={customDistance.value}
               onChange={(e) =>
                 setCustomDistance((prev: CustomDistance) => ({
                   ...prev,
-                  enabled: e.target.checked,
+                  value: e.target.value,
                 }))
               }
+              className="border rounded px-2 py-1 w-24"
+              disabled={!customDistance.enabled}
             />
-            <span className="text-sm font-medium">Custom Distance:</span>
-          </label>
-          <input
-            aria-label="Custom distance value"
-            type="number"
-            min="0.1"
-            value={customDistance.value}
-            onChange={(e) =>
-              setCustomDistance((prev: CustomDistance) => ({
-                ...prev,
-                value: e.target.value,
-              }))
-            }
-            className="border rounded px-2 py-1 w-24"
-            disabled={!customDistance.enabled}
-          />
-          <select
-            aria-label="Custom distance unit"
-            value={customDistance.unit}
-            onChange={(e) =>
-              setCustomDistance((prev: CustomDistance) => ({
-                ...prev,
-                unit: e.target.value,
-              }))
-            }
-            className="border rounded px-2 py-1"
-            disabled={!customDistance.enabled}
-          >
-            <option value="km">km</option>
-            <option value="mi">mi</option>
-          </select>
+            <select
+              aria-label="Custom distance unit"
+              value={customDistance.unit}
+              onChange={(e) =>
+                setCustomDistance((prev: CustomDistance) => ({
+                  ...prev,
+                  unit: e.target.value,
+                }))
+              }
+              className="border rounded px-2 py-1"
+              disabled={!customDistance.enabled}
+            >
+              <option value="km">km</option>
+              <option value="mi">mi</option>
+            </select>
           </div>
           <div className="flex gap-2">
-            <button onClick={resetPage} className="text-xs font-medium bg-transparent hover:bg-yellow-500 text-yellow-700 font-semibold hover:text-white py-2 px-4 border border-yellow-500 hover:border-transparent rounded">Reset Page</button>
+            <button
+              onClick={resetPage}
+              className="text-xs font-medium bg-transparent hover:bg-yellow-500 text-yellow-700 font-semibold hover:text-white py-2 px-4 border border-yellow-500 hover:border-transparent rounded"
+            >
+              Reset Page
+            </button>
           </div>
         </div>
       </div>
@@ -518,7 +529,7 @@ const PaceCalculator = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredData.map((row, index) => (
+            {paceData.map((row, index) => (
               <tr
                 key={row.kph}
                 className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
@@ -529,7 +540,7 @@ const PaceCalculator = () => {
                       {row.minPerKm}
                     </td>
                     <td className="border p-2 text-center bg-sky-50">
-                      {row.kph.toFixed(1)}
+                      {row.kph}
                     </td>
                   </>
                 )}
@@ -593,7 +604,8 @@ const PaceCalculator = () => {
           className="text-blue-600 hover:text-blue-800 transition-colors duration-200 underline decoration-gray-300 hover:decoration-blue-800"
         >
           donations to help offset server costs
-        </a> are much appreciated :)
+        </a>{" "}
+        are much appreciated :)
       </div>
     </div>
   );
