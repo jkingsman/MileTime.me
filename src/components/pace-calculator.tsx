@@ -593,8 +593,7 @@ const PaceCalculator = () => {
           className="text-blue-600 hover:text-blue-800 transition-colors duration-200 underline decoration-gray-300 hover:decoration-blue-800"
         >
           donations to help offset server costs
-        </a>
-        are much appreciated :)
+        </a> are much appreciated :)
       </div>
     </div>
   );
