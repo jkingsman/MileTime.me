@@ -6,7 +6,7 @@ const MILE_TO_KM = 1 / KM_TO_MILES;
 const STORAGE_KEY = "paceCalculatorPreferences";
 
 const STORAGE_VERSION_KEY = "storageVersion";
-const STORAGE_VERSION = 4;
+const STORAGE_VERSION = 5;
 
 const STANDARD_DISTANCES = [
   {
@@ -60,10 +60,10 @@ const DEFAULT_PREFERENCES = {
   // duplicates for validation
   intervalValue: "0.1",
   intervalInput: "0.1",
-  minPaceValue: "2'52\"",
-  minPaceInput: "2'52\"",
-  maxPaceValue: "8'34\"",
-  maxPaceInput: "8'34\"",
+  minPaceValue: "2:52",
+  minPaceInput: "2:52",
+  maxPaceValue: "8:34",
+  maxPaceInput: "8:34",
 
   intervalUnit: "km/h",
 };
@@ -77,15 +77,15 @@ interface CustomDistance {
 const formatPace = (paceInSeconds: number) => {
   const minutes = Math.floor(paceInSeconds / 60);
   const seconds = Math.round(paceInSeconds % 60);
-  return `${minutes}'${seconds.toString().padStart(2, "0")}"`;
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 };
 
 const parsePace = (paceStr: string) => {
-  const [minutes, seconds] = paceStr.split("'");
+  const [minutes, seconds] = paceStr.split(":");
   if (!minutes || !seconds) {
     return NaN;
   }
-  return parseFloat(minutes) + parseFloat(seconds.replace('"', "")) / 60;
+  return parseFloat(minutes) + parseFloat(seconds) / 60;
 };
 
 const formatTime = (timeInSeconds: number) => {
