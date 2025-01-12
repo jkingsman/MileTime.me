@@ -23,7 +23,7 @@ const STANDARD_DISTANCES = [
     defaultEnabled: true,
   },
   { id: "15k", name: "15 km", distance: 15 },
-  { id: "20k", name: "20 km", distance: 20 },
+  { id: "20k", name: "20 km", distance: 20, defaultEnabled: true },
   {
     id: "hm",
     name: "HM",
@@ -88,7 +88,7 @@ const formatTime = (timeInSeconds: number) => {
   if (hours > 0) {
     return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds
       .toString()
-      .padStart(2, "0")}"`;
+      .padStart(2, "0")}`;
   }
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 };
@@ -237,8 +237,11 @@ const PaceCalculator = () => {
         {/* Pace Controls */}
         <div className="flex flex-wrap gap-4">
           <div className="flex items-center gap-2">
-            <label className="text-sm font-medium">Min Pace:</label>
+            <label htmlFor="minPace" className="text-sm font-medium">
+              Min Pace:
+            </label>
             <input
+              id="minPace"
               type="text"
               value={minPace}
               onChange={(e) => setMinPace(e.target.value)}
@@ -246,8 +249,11 @@ const PaceCalculator = () => {
             />
           </div>
           <div className="flex items-center gap-2">
-            <label className="text-sm font-medium">Max Pace:</label>
+            <label htmlFor="maxPace" className="text-sm font-medium">
+              Max Pace:
+            </label>
             <input
+              id="maxPace"
               type="text"
               value={maxPace}
               onChange={(e) => setMaxPace(e.target.value)}
@@ -255,8 +261,11 @@ const PaceCalculator = () => {
             />
           </div>
           <div className="flex items-center gap-2">
-            <label className="text-sm font-medium">Pace Unit:</label>
+            <label htmlFor="paceUnit" className="text-sm font-medium">
+              Pace Unit:
+            </label>
             <select
+              id="paceUnit"
               value={paceUnit}
               onChange={(e) => setPaceUnit(e.target.value)}
               className="border rounded px-2 py-1"
@@ -271,8 +280,9 @@ const PaceCalculator = () => {
         <div className="flex items-center gap-4">
           <label className="text-sm font-medium">Display Units:</label>
           <div className="flex gap-4">
-            <label className="flex items-center gap-1">
+            <label htmlFor="kmDisplay" className="flex items-center gap-1">
               <input
+                id="kmDisplay"
                 type="radio"
                 value="km"
                 checked={displayUnit === "km"}
@@ -280,8 +290,9 @@ const PaceCalculator = () => {
               />
               Metric
             </label>
-            <label className="flex items-center gap-1">
+            <label htmlFor="miDisplay" className="flex items-center gap-1">
               <input
+                id="mileDisplay"
                 type="radio"
                 value="mi"
                 checked={displayUnit === "mi"}
@@ -289,8 +300,9 @@ const PaceCalculator = () => {
               />
               Imperial
             </label>
-            <label className="flex items-center gap-1">
+            <label htmlFor="bothDisplay" className="flex items-center gap-1">
               <input
+                id="bothDisplay"
                 type="radio"
                 value="both"
                 checked={displayUnit === "both"}
@@ -303,14 +315,18 @@ const PaceCalculator = () => {
 
         {/* Interval Controls */}
         <div className="flex items-center gap-4">
-          <label className="text-sm font-medium">Row Interval:</label>
+          <label htmlFor="rowInterval" className="text-sm font-medium">
+            Row Interval:
+          </label>
           <input
+            id="rowInterval"
             type="text"
             value={intervalValue}
             onChange={(e) => setIntervalValue(e.target.value)}
             className="border rounded px-2 py-1 w-24"
           />
           <select
+            aria-label="Row interval unit"
             value={intervalUnit}
             onChange={(e) => setIntervalUnit(e.target.value)}
             className="border rounded px-2 py-1"
@@ -327,6 +343,7 @@ const PaceCalculator = () => {
             {STANDARD_DISTANCES.map((dist) => (
               <label key={dist.id} className="flex items-center gap-1">
                 <input
+                  aria-label={dist.name}
                   type="checkbox"
                   checked={selectedDistances.has(dist.id)}
                   onChange={() => handleDistanceToggle(dist.id)}
@@ -341,6 +358,7 @@ const PaceCalculator = () => {
         <div className="flex items-center gap-4">
           <label className="flex items-center gap-2">
             <input
+              aria-label="Custom distance enable"
               type="checkbox"
               checked={customDistance.enabled}
               onChange={(e) =>
@@ -353,6 +371,7 @@ const PaceCalculator = () => {
             <span className="text-sm font-medium">Custom Distance:</span>
           </label>
           <input
+            aria-label="Custom distance value"
             type="number"
             value={customDistance.value}
             onChange={(e) =>
@@ -365,6 +384,7 @@ const PaceCalculator = () => {
             disabled={!customDistance.enabled}
           />
           <select
+            aria-label="Custom distance unit"
             value={customDistance.unit}
             onChange={(e) =>
               setCustomDistance((prev: CustomDistance) => ({
