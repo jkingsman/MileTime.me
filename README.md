@@ -1,6 +1,6 @@
 # MileTime.me
 
-A simple site to generate mi/min, km/min, and race time breakdowns.
+A simple site to generate mi/min, km/min, and race time breakdowns. See the actual site at https://miletime.me/
 
 The bulk of the logic is in `src/components/pace-calculator.tsx`.
 
