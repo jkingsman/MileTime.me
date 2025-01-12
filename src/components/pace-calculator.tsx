@@ -62,6 +62,12 @@ const DEFAULT_PREFERENCES = {
   intervalUnit: "km/h",
 };
 
+interface CustomDistance {
+  enabled?: boolean;
+  value?: number;
+  unit?: string;
+}
+
 // Utility functions remain the same
 const formatPace = (paceInSeconds: number) => {
   const minutes = Math.floor(paceInSeconds / 60);
@@ -169,13 +175,15 @@ const PaceCalculator = () => {
     setSelectedDistances(newSelected);
   };
 
-  const getEffectiveInterval = () => {
-    const value = parseFloat(intervalValue);
-    return intervalUnit === "mi/h" ? value * MILE_TO_KM : value;
-  };
+
 
   // Rest of the component logic remains the same...
   const paceData = useMemo(() => {
+    const getEffectiveInterval = () => {
+      const value = parseFloat(intervalValue);
+      return intervalUnit === "mi/h" ? value * MILE_TO_KM : value;
+    };
+
     const data = [];
     const interval = getEffectiveInterval();
     for (let kph = 7.0; kph <= 21.0; kph += interval) {
@@ -336,7 +344,7 @@ const PaceCalculator = () => {
               type="checkbox"
               checked={customDistance.enabled}
               onChange={(e) =>
-                setCustomDistance((prev) => ({
+                setCustomDistance((prev: CustomDistance) => ({
                   ...prev,
                   enabled: e.target.checked,
                 }))
@@ -348,7 +356,10 @@ const PaceCalculator = () => {
             type="number"
             value={customDistance.value}
             onChange={(e) =>
-              setCustomDistance((prev) => ({ ...prev, value: e.target.value }))
+              setCustomDistance((prev: CustomDistance) => ({
+                ...prev,
+                value: e.target.value,
+              }))
             }
             className="border rounded px-2 py-1 w-24"
             disabled={!customDistance.enabled}
@@ -356,7 +367,10 @@ const PaceCalculator = () => {
           <select
             value={customDistance.unit}
             onChange={(e) =>
-              setCustomDistance((prev) => ({ ...prev, unit: e.target.value }))
+              setCustomDistance((prev: CustomDistance) => ({
+                ...prev,
+                unit: e.target.value,
+              }))
             }
             className="border rounded px-2 py-1"
             disabled={!customDistance.enabled}
