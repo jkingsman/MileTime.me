@@ -6,7 +6,7 @@ const MILE_TO_KM = 1 / KM_TO_MILES;
 const STORAGE_KEY = "paceCalculatorPreferences";
 
 const STORAGE_VERSION_KEY = "storageVersion";
-const STORAGE_VERSION = 2;
+const STORAGE_VERSION = 3;
 
 const STANDARD_DISTANCES = [
   {
@@ -58,7 +58,11 @@ const DEFAULT_PREFERENCES = {
     value: 5,
     unit: "mi",
   },
+
+  // duplicates for validation
   intervalValue: "0.1",
+  intervalInput: "0.1",
+
   intervalUnit: "km/h",
 };
 
@@ -68,7 +72,6 @@ interface CustomDistance {
   unit?: string;
 }
 
-// Utility functions remain the same
 const formatPace = (paceInSeconds: number) => {
   const minutes = Math.floor(paceInSeconds / 60);
   const seconds = Math.round(paceInSeconds % 60);
@@ -92,6 +95,12 @@ const formatTime = (timeInSeconds: number) => {
   }
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 };
+
+
+const resetPage = () => {
+  localStorage.clear();
+  window.location.reload();
+}
 
 const PaceCalculator = () => {
   // Load preferences from localStorage or use defaults
@@ -119,6 +128,7 @@ const PaceCalculator = () => {
 
   const [minPace, setMinPace] = useState(() => loadPreferences().minPace);
   const [maxPace, setMaxPace] = useState(() => loadPreferences().maxPace);
+
   const [paceUnit, setPaceUnit] = useState(() => loadPreferences().paceUnit);
   const [displayUnit, setDisplayUnit] = useState(
     () => loadPreferences().displayUnit
@@ -131,6 +141,9 @@ const PaceCalculator = () => {
   );
   const [intervalValue, setIntervalValue] = useState(
     () => loadPreferences().intervalValue
+  );
+  const [intervalInput, setIntervalInput] = useState(
+    () => loadPreferences().intervalInput
   );
   const [intervalUnit, setIntervalUnit] = useState(
     () => loadPreferences().intervalUnit
@@ -145,6 +158,7 @@ const PaceCalculator = () => {
       selectedDistances: Array.from(selectedDistances),
       customDistance,
       intervalValue,
+      intervalInput,
       intervalUnit,
     };
 
@@ -175,9 +189,16 @@ const PaceCalculator = () => {
     setSelectedDistances(newSelected);
   };
 
+  const handleIntervalChange = (value: string) => {
+    setIntervalInput(value);
+    const parsed = parseFloat(value);
+    if (!isNaN(parsed) && parsed > 0) {
+      console.log(`Setting as valid ${parsed}`)
+      setIntervalValue(parsed);
+      setIntervalInput(parsed);
+    }
+  };
 
-
-  // Rest of the component logic remains the same...
   const paceData = useMemo(() => {
     const getEffectiveInterval = () => {
       const value = parseFloat(intervalValue);
@@ -230,7 +251,6 @@ const PaceCalculator = () => {
     });
   }, [paceData, minPace, maxPace, paceUnit]);
 
-  // JSX remains the same...
   return (
     <div className="w-full max-w-full space-y-4">
       <div className="space-y-4 p-4 bg-gray-50 rounded-lg controls-container">
@@ -320,10 +340,14 @@ const PaceCalculator = () => {
           </label>
           <input
             id="rowInterval"
-            type="text"
-            value={intervalValue}
-            onChange={(e) => setIntervalValue(e.target.value)}
-            className="border rounded px-2 py-1 w-24"
+            type="number"
+            step="0.1"
+            min="0"
+            value={intervalInput}
+            onChange={(e) => handleIntervalChange(e.target.value)}
+            className={`border rounded px-2 py-1 w-24 ${
+              intervalInput === intervalValue ? 'bg-white' : 'bg-red-50'
+            }`}
           />
           <select
             aria-label="Row interval unit"
@@ -355,7 +379,8 @@ const PaceCalculator = () => {
         </div>
 
         {/* Custom Distance */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
           <label className="flex items-center gap-2">
             <input
               aria-label="Custom distance enable"
@@ -373,6 +398,7 @@ const PaceCalculator = () => {
           <input
             aria-label="Custom distance value"
             type="number"
+            min="0.1"
             value={customDistance.value}
             onChange={(e) =>
               setCustomDistance((prev: CustomDistance) => ({
@@ -398,6 +424,10 @@ const PaceCalculator = () => {
             <option value="km">km</option>
             <option value="mi">mi</option>
           </select>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={resetPage} className="text-xs font-medium bg-transparent hover:bg-yellow-500 text-yellow-700 font-semibold hover:text-white py-2 px-4 border border-yellow-500 hover:border-transparent rounded">Reset Page</button>
+          </div>
         </div>
       </div>
 
