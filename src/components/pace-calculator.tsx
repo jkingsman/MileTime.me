@@ -6,7 +6,7 @@ const MILE_TO_KM = 1 / KM_TO_MILES;
 const STORAGE_KEY = "paceCalculatorPreferences";
 
 const STORAGE_VERSION_KEY = "storageVersion";
-const STORAGE_VERSION = 3;
+const STORAGE_VERSION = 4;
 
 const STANDARD_DISTANCES = [
   {
@@ -48,8 +48,6 @@ const STANDARD_DISTANCES = [
 ];
 
 const DEFAULT_PREFERENCES = {
-  minPace: "2'52\"",
-  maxPace: "8'34\"",
   paceUnit: "min/km",
   displayUnit: "both",
   selectedDistances: STANDARD_DISTANCES.filter((d) => d.defaultEnabled).map((d) => d.id),
@@ -62,6 +60,10 @@ const DEFAULT_PREFERENCES = {
   // duplicates for validation
   intervalValue: "0.1",
   intervalInput: "0.1",
+  minPaceValue: "2'52\"",
+  minPaceInput: "2'52\"",
+  maxPaceValue: "8'34\"",
+  maxPaceInput: "8'34\"",
 
   intervalUnit: "km/h",
 };
@@ -80,6 +82,9 @@ const formatPace = (paceInSeconds: number) => {
 
 const parsePace = (paceStr: string) => {
   const [minutes, seconds] = paceStr.split("'");
+  if (!minutes || !seconds) {
+    return NaN;
+  }
   return parseFloat(minutes) + parseFloat(seconds.replace('"', "")) / 60;
 };
 
@@ -126,8 +131,10 @@ const PaceCalculator = () => {
     return DEFAULT_PREFERENCES;
   };
 
-  const [minPace, setMinPace] = useState(() => loadPreferences().minPace);
-  const [maxPace, setMaxPace] = useState(() => loadPreferences().maxPace);
+  const [minPaceValue, setMinPaceValue] = useState(() => loadPreferences().minPaceValue);
+  const [minPaceInput, setMinPaceInput] = useState(() => loadPreferences().minPaceInput);
+  const [maxPaceValue, setMaxPaceValue] = useState(() => loadPreferences().maxPaceValue);
+  const [maxPaceInput, setMaxPaceInput] = useState(() => loadPreferences().maxPaceInput);
 
   const [paceUnit, setPaceUnit] = useState(() => loadPreferences().paceUnit);
   const [displayUnit, setDisplayUnit] = useState(
@@ -151,8 +158,10 @@ const PaceCalculator = () => {
 
   useEffect(() => {
     const preferences = {
-      minPace,
-      maxPace,
+      minPaceValue,
+      maxPaceValue,
+      minPaceInput,
+      maxPaceInput,
       paceUnit,
       displayUnit,
       selectedDistances: Array.from(selectedDistances),
@@ -169,8 +178,10 @@ const PaceCalculator = () => {
       console.error("Error saving preferences:", error);
     }
   }, [
-    minPace,
-    maxPace,
+    minPaceValue,
+    maxPaceValue,
+    minPaceInput,
+    maxPaceInput,
     paceUnit,
     displayUnit,
     selectedDistances,
@@ -193,9 +204,28 @@ const PaceCalculator = () => {
     setIntervalInput(value);
     const parsed = parseFloat(value);
     if (!isNaN(parsed) && parsed > 0) {
-      console.log(`Setting as valid ${parsed}`)
       setIntervalValue(parsed);
       setIntervalInput(parsed);
+    }
+  };
+
+  const handleMinPaceChange = (value: string) => {
+    setMinPaceInput(value);
+    const parsed = parsePace(value);
+    if (!isNaN(parsed) && parsed > 0) {
+      console.log(`Setting as valid ${parsed}`)
+      setMinPaceValue(value);
+      setMinPaceInput(value);
+    }
+  };
+
+  const handleMaxPaceChange = (value: string) => {
+    setMaxPaceInput(value);
+    const parsed = parsePace(value);
+    if (!isNaN(parsed) && parsed > 0) {
+      console.log(`Setting as valid ${parsed}`)
+      setMaxPaceValue(value);
+      setMaxPaceInput(value);
     }
   };
 
@@ -241,15 +271,15 @@ const PaceCalculator = () => {
   }, [intervalValue, intervalUnit, customDistance]);
 
   const filteredData = useMemo(() => {
-    const minPaceValue = parsePace(minPace);
-    const maxPaceValue = parsePace(maxPace);
+    const minPaceValueParsed = parsePace(minPaceValue);
+    const maxPaceValueParsed = parsePace(maxPaceValue);
 
     return paceData.filter((row) => {
       const rowPace =
         paceUnit === "min/km" ? row.minPerKmRaw : row.minPerMileRaw;
-      return rowPace >= minPaceValue && rowPace <= maxPaceValue;
+      return rowPace >= minPaceValueParsed && rowPace <= maxPaceValueParsed;
     });
-  }, [paceData, minPace, maxPace, paceUnit]);
+  }, [paceData, minPaceValue, maxPaceValue, paceUnit]);
 
   return (
     <div className="w-full max-w-full space-y-4">
@@ -263,9 +293,11 @@ const PaceCalculator = () => {
             <input
               id="minPace"
               type="text"
-              value={minPace}
-              onChange={(e) => setMinPace(e.target.value)}
-              className="border rounded px-2 py-1 w-24"
+              value={minPaceInput}
+              onChange={(e) => handleMinPaceChange(e.target.value)}
+              className={`border rounded px-2 py-1 w-24 ${
+                minPaceInput === minPaceValue ? 'bg-white' : 'bg-red-50'
+              }`}
             />
           </div>
           <div className="flex items-center gap-2">
@@ -275,14 +307,16 @@ const PaceCalculator = () => {
             <input
               id="maxPace"
               type="text"
-              value={maxPace}
-              onChange={(e) => setMaxPace(e.target.value)}
-              className="border rounded px-2 py-1 w-24"
+              value={maxPaceInput}
+              onChange={(e) => handleMaxPaceChange(e.target.value)}
+              className={`border rounded px-2 py-1 w-24 ${
+                maxPaceInput === maxPaceValue ? 'bg-white' : 'bg-red-50'
+              }`}
             />
           </div>
           <div className="flex items-center gap-2">
             <label htmlFor="paceUnit" className="text-sm font-medium">
-              Pace Unit:
+              Min/Max Unit:
             </label>
             <select
               id="paceUnit"
