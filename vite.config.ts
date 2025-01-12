@@ -38,4 +38,9 @@ export default defineConfig({
       "display": "standalone"
     }
   })],
+  server: {
+    watch: {
+      usePolling: true, // Enable polling for file changes
+    },
+  },
 })
