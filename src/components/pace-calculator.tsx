@@ -330,9 +330,9 @@ const PaceCalculator = () => {
           </div>
         </div>
 
-        {/* Display Unit Controls */}
+        {/* Pace Unit Controls */}
         <div className="flex items-center gap-4">
-          <label className="text-sm font-medium">Display Units:</label>
+          <label className="text-sm font-medium">Pace Units:</label>
           <div className="flex gap-4">
             <label htmlFor="kmDisplay" className="flex items-center gap-1">
               <input
@@ -471,12 +471,12 @@ const PaceCalculator = () => {
             <tr>
               {displayUnit !== "mi" && (
                 <>
-                  <th className="border p-2 bg-rose-100">
+                  <th className="border p-2 bg-teal-100">
                     Pace
                     <br />
                     (min/km)
                   </th>
-                  <th className="border p-2 bg-emerald-100">
+                  <th className="border p-2 bg-sky-100">
                     Speed
                     <br />
                     (km/h)
@@ -485,12 +485,12 @@ const PaceCalculator = () => {
               )}
               {displayUnit !== "km" && (
                 <>
-                  <th className="border p-2 bg-rose-100">
+                  <th className="border p-2 bg-teal-100">
                     Pace
                     <br />
                     (min/mi)
                   </th>
-                  <th className="border p-2 bg-emerald-100">
+                  <th className="border p-2 bg-sky-100">
                     Speed
                     <br />
                     (mph)
@@ -525,20 +525,20 @@ const PaceCalculator = () => {
               >
                 {displayUnit !== "mi" && (
                   <>
-                    <td className="border p-2 text-center bg-rose-50">
+                    <td className="border p-2 text-center bg-teal-50">
                       {row.minPerKm}
                     </td>
-                    <td className="border p-2 text-center bg-emerald-50">
+                    <td className="border p-2 text-center bg-sky-50">
                       {row.kph.toFixed(1)}
                     </td>
                   </>
                 )}
                 {displayUnit !== "km" && (
                   <>
-                    <td className="border p-2 text-center bg-rose-50">
+                    <td className="border p-2 text-center bg-teal-50">
                       {row.minPerMile}
                     </td>
-                    <td className="border p-2 text-center bg-emerald-50">
+                    <td className="border p-2 text-center bg-sky-50">
                       {row.mph}
                     </td>
                   </>
@@ -563,6 +563,38 @@ const PaceCalculator = () => {
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="text-center text-sm text-gray-600 mx-auto max-w-2xl p-4 footer-print-visible">
+        from MileTime.me, made with love and open source by Jack Kingsman
+      </div>
+      <div className="text-center text-sm text-gray-600 mx-auto max-w-2xl p-4 footer">
+        made with love and{" "}
+        <a
+          href="https://github.com/jkingsman/MileTime.me"
+          target="_blank"
+          className="text-blue-600 hover:text-blue-800 transition-colors duration-200 underline decoration-gray-300 hover:decoration-blue-800"
+        >
+          open source
+        </a>{" "}
+        by{" "}
+        <a
+          href="https://jacksbrain.com"
+          target="_blank"
+          className="text-blue-600 hover:text-blue-800 transition-colors duration-200 underline decoration-gray-300 hover:decoration-blue-800"
+        >
+          Jack Kingsman
+        </a>
+        .
+        <br />
+        this site is free, and ad-free, forever;{" "}
+        <a
+          href="https://ko-fi.com/jackkingsman"
+          target="_blank"
+          className="text-blue-600 hover:text-blue-800 transition-colors duration-200 underline decoration-gray-300 hover:decoration-blue-800"
+        >
+          donations to help offset server costs
+        </a>
+        are much appreciated :)
       </div>
     </div>
   );

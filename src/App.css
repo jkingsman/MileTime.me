@@ -3,6 +3,10 @@
     size: landscape;
   }
 
+  body {
+    print-color-adjust: exact;
+  }
+
   .controls-container {
     display: none !important;
   }
@@ -29,6 +33,16 @@
   td,
   th {
     page-break-inside: avoid;
+  }
+
+  .footer {
+    display: none;
+  }
+}
+
+@media screen {
+  .footer-print-visible {
+    display: none;;
   }
 }
 
