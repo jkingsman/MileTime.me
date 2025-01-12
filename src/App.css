@@ -46,6 +46,10 @@
   }
 }
 
+tr {
+  cursor: pointer;
+}
+
 /*!
  * "Fork me on GitHub" CSS ribbon v0.2.3 | MIT License
  * https://github.com/simonwhitaker/github-fork-ribbon-css

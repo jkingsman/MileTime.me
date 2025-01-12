@@ -66,6 +66,7 @@ const DEFAULT_PREFERENCES = {
   maxPaceInput: "8:34",
 
   intervalUnit: "km/h",
+  highlightedSpeeds: [],
 };
 
 interface CustomDistance {
@@ -100,7 +101,6 @@ const formatTime = (timeInSeconds: number) => {
   }
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 };
-
 
 const resetPage = () => {
   localStorage.clear();
@@ -155,6 +155,9 @@ const PaceCalculator = () => {
   const [intervalUnit, setIntervalUnit] = useState(
     () => loadPreferences().intervalUnit
   );
+  const [hightlightedSpeeds, setHightlightedSpeeds] = useState(
+    () => new Set(loadPreferences().hightlightedSpeeds)
+  );
 
   useEffect(() => {
     const preferences = {
@@ -169,10 +172,14 @@ const PaceCalculator = () => {
       intervalValue,
       intervalInput,
       intervalUnit,
+      hightlightedSpeeds: Array.from(hightlightedSpeeds),
     };
 
     try {
-      localStorage.setItem(STORAGE_VERSION_KEY, JSON.stringify(STORAGE_VERSION));
+      localStorage.setItem(
+        STORAGE_VERSION_KEY,
+        JSON.stringify(STORAGE_VERSION)
+      );
       localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
     } catch (error) {
       console.error("Error saving preferences:", error);
@@ -187,7 +194,9 @@ const PaceCalculator = () => {
     selectedDistances,
     customDistance,
     intervalValue,
+    intervalInput,
     intervalUnit,
+    hightlightedSpeeds,
   ]);
 
   const handleDistanceToggle = (distanceId: string) => {
@@ -213,7 +222,6 @@ const PaceCalculator = () => {
     setMinPaceInput(value);
     const parsed = parsePace(value);
     if (!isNaN(parsed) && parsed > 0) {
-      console.log(`Setting as valid ${parsed}`)
       setMinPaceValue(value);
       setMinPaceInput(value);
     }
@@ -223,10 +231,20 @@ const PaceCalculator = () => {
     setMaxPaceInput(value);
     const parsed = parsePace(value);
     if (!isNaN(parsed) && parsed > 0) {
-      console.log(`Setting as valid ${parsed}`)
       setMaxPaceValue(value);
       setMaxPaceInput(value);
     }
+  };
+
+  const handleHighlightToggle = (speed: string) => {
+    const newHighlightedSpeeds = new Set(hightlightedSpeeds);
+    if (newHighlightedSpeeds.has(speed)) {
+      newHighlightedSpeeds.delete(speed);
+    } else {
+      newHighlightedSpeeds.add(speed);
+    }
+    setHightlightedSpeeds(newHighlightedSpeeds);
+    console.log(newHighlightedSpeeds);
   };
 
   const paceData = useMemo(() => {
@@ -242,7 +260,6 @@ const PaceCalculator = () => {
     const minPaceValueParsed = (60 / parsePace(minPaceValue)) * paceModifier;
     const maxPaceValueParsed = (60 / parsePace(maxPaceValue)) * paceModifier;
 
-    console.log(minPaceValueParsed, maxPaceValueParsed, interval);
     for (
       let kph = maxPaceValueParsed;
       kph <= minPaceValueParsed;
@@ -532,24 +549,55 @@ const PaceCalculator = () => {
             {paceData.map((row, index) => (
               <tr
                 key={row.kph}
-                className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                className={
+                  hightlightedSpeeds.has(row.kph)
+                    ? "bg-yellow-200"
+                    : index % 2 === 0
+                    ? "bg-white"
+                    : "bg-gray-50"
+                }
+                onClick={() => handleHighlightToggle(row.kph)}
               >
                 {displayUnit !== "mi" && (
                   <>
-                    <td className="border p-2 text-center bg-teal-50">
+                    <td
+                      className={
+                        hightlightedSpeeds.has(row.kph)
+                          ? "border p-2 text-center bg-yellow-100"
+                          : "border p-2 text-center bg-teal-50"
+                      }
+                    >
                       {row.minPerKm}
                     </td>
-                    <td className="border p-2 text-center bg-sky-50">
+                    <td
+                      className={
+                        hightlightedSpeeds.has(row.kph)
+                          ? "border p-2 text-center bg-yellow-100"
+                          : "border p-2 text-center bg-sky-50"
+                      }
+                    >
                       {row.kph}
                     </td>
                   </>
                 )}
                 {displayUnit !== "km" && (
                   <>
-                    <td className="border p-2 text-center bg-teal-50">
+                    <td
+                      className={
+                        hightlightedSpeeds.has(row.kph)
+                          ? "border p-2 text-center bg-yellow-100"
+                          : "border p-2 text-center bg-teal-50"
+                      }
+                    >
                       {row.minPerMile}
                     </td>
-                    <td className="border p-2 text-center bg-sky-50">
+                    <td
+                      className={
+                        hightlightedSpeeds.has(row.kph)
+                          ? "border p-2 text-center bg-yellow-100"
+                          : "border p-2 text-center bg-sky-50"
+                      }
+                    >
                       {row.mph}
                     </td>
                   </>
