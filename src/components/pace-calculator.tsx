@@ -44,10 +44,10 @@ const PaceCalculator = () => {
   const [displayUnit, setDisplayUnit] = useState(
     () => loadPreferences().displayUnit
   );
-  const [selectedDistances, setSelectedDistances] = useState(
+  const [selectedDistances, setSelectedDistances] = useState<Set<string>>(
     () => new Set(loadPreferences().selectedDistances)
   );
-  const [emphasizedDistances, setEmphasizedDistances] = useState(
+  const [emphasizedDistances, setEmphasizedDistances] = useState<Set<string>>(
     () => new Set(loadPreferences().emphasizedDistances)
   );
   const [customDistance, setCustomDistance] = useState(
@@ -62,7 +62,7 @@ const PaceCalculator = () => {
   const [intervalUnit, setIntervalUnit] = useState(
     () => loadPreferences().intervalUnit
   );
-  const [hightlightedSpeeds, setHightlightedSpeeds] = useState(
+  const [hightlightedSpeeds, setHightlightedSpeeds] = useState<Set<string>>(
     () => new Set(loadPreferences().hightlightedSpeeds)
   );
 
@@ -108,74 +108,29 @@ const PaceCalculator = () => {
     hightlightedSpeeds,
   ]);
 
-  const handleDistanceToggle = (distanceId: string) => {
-    const newSelected = new Set(selectedDistances);
-    if (newSelected.has(distanceId)) {
-      newSelected.delete(distanceId);
+  const handleSetToggle = (setKey: string, selectedSet: Set<string>, setter: (value: Set<string>) => void) => {
+    const newSelected = new Set(selectedSet);
+    if (newSelected.has(setKey)) {
+      newSelected.delete(setKey);
     } else {
-      newSelected.add(distanceId);
+      newSelected.add(setKey);
     }
-    setSelectedDistances(newSelected);
-  };
+    setter(newSelected);
+  }
 
-  const handleEmphasisToggle = (distanceId: string) => {
-    const newSelected = new Set(emphasizedDistances);
-    if (newSelected.has(distanceId)) {
-      newSelected.delete(distanceId);
-    } else {
-      newSelected.add(distanceId);
-    }
-    setEmphasizedDistances(newSelected);
-    console.log(newSelected)
-  };
-
-  const handleIntervalChange = (value: string) => {
-    setIntervalInput(value);
-    const parsed = parseFloat(value);
+  const handleNumericalValidatableChange = (value: string, validator: (value: string) => number, inputSetter: (value: string) => void, valueSetter: (value: string) => void) => {
+    inputSetter(value);
+    const parsed = validator(value);
     if (!isNaN(parsed) && parsed > 0) {
-      setIntervalValue(parsed);
-      setIntervalInput(parsed);
+      valueSetter(value);
+      inputSetter(value);
     }
-  };
-
-  const handleMinPaceChange = (value: string) => {
-    setMinPaceInput(value);
-    const parsed = parsePace(value);
-    if (!isNaN(parsed) && parsed > 0) {
-      setMinPaceValue(value);
-      setMinPaceInput(value);
-    }
-  };
-
-  const handleMaxPaceChange = (value: string) => {
-    setMaxPaceInput(value);
-    const parsed = parsePace(value);
-    if (!isNaN(parsed) && parsed > 0) {
-      setMaxPaceValue(value);
-      setMaxPaceInput(value);
-    }
-  };
-
-  const handleHighlightToggle = (speed: string) => {
-    const newHighlightedSpeeds = new Set(hightlightedSpeeds);
-    if (newHighlightedSpeeds.has(speed)) {
-      newHighlightedSpeeds.delete(speed);
-    } else {
-      newHighlightedSpeeds.add(speed);
-    }
-    setHightlightedSpeeds(newHighlightedSpeeds);
-    console.log(newHighlightedSpeeds);
-  };
+  }
 
   const paceData = useMemo(() => {
-    const getEffectiveInterval = () => {
-      const value = parseFloat(intervalValue);
-      return intervalUnit === "mi/h" ? value * MILE_TO_KM : value;
-    };
+    const data = []
 
-    const data = [];
-    const interval = getEffectiveInterval();
-
+    const interval = intervalUnit === "mi/h" ? parseFloat(intervalValue) * MILE_TO_KM : parseFloat(intervalValue);
     const paceModifier = paceUnit === "min/km" ? 1 : MILE_TO_KM;
     const minPaceValueParsed = (60 / parsePace(minPaceValue)) * paceModifier;
     const maxPaceValueParsed = (60 / parsePace(maxPaceValue)) * paceModifier;
@@ -237,8 +192,8 @@ const PaceCalculator = () => {
               id="minPace"
               type="text"
               value={minPaceInput}
-              onChange={(e) => handleMinPaceChange(e.target.value)}
-              className={`border rounded px-2 py-1 w-24 ${minPaceInput === minPaceValue ? "bg-white" : "bg-red-50"
+              onChange={(e) => handleNumericalValidatableChange(e.target.value, parsePace, setMinPaceInput, setMinPaceValue)}
+              className={`border rounded px-2 py-1 w-24 w-16 ${minPaceInput === minPaceValue ? "bg-white" : "bg-red-50"
                 }`}
             />
           </div>
@@ -250,8 +205,8 @@ const PaceCalculator = () => {
               id="maxPace"
               type="text"
               value={maxPaceInput}
-              onChange={(e) => handleMaxPaceChange(e.target.value)}
-              className={`border rounded px-2 py-1 w-24 ${maxPaceInput === maxPaceValue ? "bg-white" : "bg-red-50"
+              onChange={(e) => handleNumericalValidatableChange(e.target.value, parsePace, setMaxPaceInput, setMaxPaceValue)}
+              className={`border rounded px-2 py-1 w-24 w-16 ${maxPaceInput === maxPaceValue ? "bg-white" : "bg-red-50"
                 }`}
             />
           </div>
@@ -274,7 +229,7 @@ const PaceCalculator = () => {
         {/* Pace Unit Controls */}
         <div className="flex items-center gap-4">
           <label className="text-md font-medium">Pace Units:</label>
-          <div className="flex gap-4">
+          <div className="flex gap-4 flex-wrap">
             <label htmlFor="kmDisplay" className="flex items-center gap-1">
               <input
                 id="kmDisplay"
@@ -283,9 +238,9 @@ const PaceCalculator = () => {
                 checked={displayUnit === "km"}
                 onChange={(e) => setDisplayUnit(e.target.value)}
               />
-              Metric
+              km
             </label>
-            <label htmlFor="miDisplay" className="flex items-center gap-1">
+            <label htmlFor="mileDisplay" className="flex items-center gap-1">
               <input
                 id="mileDisplay"
                 type="radio"
@@ -293,7 +248,7 @@ const PaceCalculator = () => {
                 checked={displayUnit === "mi"}
                 onChange={(e) => setDisplayUnit(e.target.value)}
               />
-              Imperial
+              mi
             </label>
             <label htmlFor="bothDisplay" className="flex items-center gap-1">
               <input
@@ -303,7 +258,7 @@ const PaceCalculator = () => {
                 checked={displayUnit === "both"}
                 onChange={(e) => setDisplayUnit(e.target.value)}
               />
-              Both
+              km + mi
             </label>
           </div>
         </div>
@@ -322,7 +277,7 @@ const PaceCalculator = () => {
               step="0.1"
               min="0"
               value={intervalInput}
-              onChange={(e) => handleIntervalChange(e.target.value)}
+              onChange={(e) => handleNumericalValidatableChange(e.target.value, parseFloat, setIntervalInput, setIntervalValue)}
               className={`border rounded px-2 py-1 w-24 ${intervalInput === intervalValue ? "bg-white" : "bg-red-50"
                 }`}
             />
@@ -347,7 +302,7 @@ const PaceCalculator = () => {
                     aria-label={dist.longName ?? dist.name}
                     type="checkbox"
                     checked={selectedDistances.has(dist.id)}
-                    onChange={() => handleDistanceToggle(dist.id)}
+                    onChange={() => handleSetToggle(dist.id, selectedDistances, setSelectedDistances)}
                   />
                   <DistanceNameDisplay dist={dist} />
                 </label>
@@ -415,7 +370,7 @@ const PaceCalculator = () => {
                       aria-label={dist.longName ?? dist.name}
                       type="checkbox"
                       checked={emphasizedDistances.has(dist.id)}
-                      onChange={() => handleEmphasisToggle(dist.id)}
+                      onChange={() => handleSetToggle(dist.id, emphasizedDistances, setEmphasizedDistances)}
                     />
                     <DistanceNameDisplay dist={dist} />
                   </label>
@@ -493,12 +448,12 @@ const PaceCalculator = () => {
                 key={row.kph}
                 className={
                   hightlightedSpeeds.has(row.kph)
-                    ? "bg-yellow-200"
+                    ? "bg-yellow-100"
                     : index % 2 === 0
                       ? "bg-white"
                       : "bg-gray-50"
                 }
-                onClick={() => handleHighlightToggle(row.kph)}
+                onClick={() => handleSetToggle(row.kph, hightlightedSpeeds, setHightlightedSpeeds)}
               >
                 {displayUnit !== "mi" && (
                   <>
