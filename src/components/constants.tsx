@@ -55,6 +55,9 @@ export const DEFAULT_PREFERENCES = {
   selectedDistances: STANDARD_DISTANCES.filter((d) => d.defaultEnabled).map(
     (d) => d.id
   ),
+  emphasizedDistances: STANDARD_DISTANCES.filter((d) => d.important).map(
+    (d) => d.id
+  ),
   customDistance: {
     enabled: false,
     value: 5,
