@@ -184,13 +184,11 @@ const PaceCalculator = () => {
         (dist) => (dist.distance / kph) * 3600
       );
 
-      const customTime = customDistance.enabled
-        ? ((customDistance.unit === "mi"
-            ? customDistance.value * MILE_TO_KM
-            : customDistance.value) /
-            kph) *
-          3600
-        : null;
+      const customTime = ((customDistance.unit === "mi"
+          ? customDistance.value * MILE_TO_KM
+          : customDistance.value) /
+          kph) *
+        3600;
 
       data.push({
         kph: kph.toFixed(countDecimals(interval)),
@@ -200,7 +198,7 @@ const PaceCalculator = () => {
         minPerKmRaw: minPerKm,
         minPerMileRaw: minPerMile,
         standardTimes: standardTimes.map(formatTime),
-        customTime: customTime ? formatTime(customTime) : null,
+        customTime: customDistance.enabled ? formatTime(customTime) : null,
       });
     }
     return data;
@@ -425,7 +423,6 @@ const PaceCalculator = () => {
           </div>
 
           {/* Custom Distance */}
-
           <div className="flex items-center gap-4">
             <label className="flex items-center gap-2">
               <input
