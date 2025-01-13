@@ -6,7 +6,7 @@ export const MILE_TO_KM = 1 / KM_TO_MILES;
 export const STORAGE_KEY = "paceCalculatorPreferences";
 
 export const STORAGE_VERSION_KEY = "storageVersion";
-export const STORAGE_VERSION = 5;
+export const STORAGE_VERSION = 8;
 
 export const STANDARD_DISTANCES: StandardDistance[] = [
   {
@@ -23,7 +23,7 @@ export const STANDARD_DISTANCES: StandardDistance[] = [
     defaultEnabled: true,
   },
   { id: "15k", name: "15km", distance: 15 },
-  { id: "20k", name: "20km", distance: 20, defaultEnabled: true },
+  { id: "20k", name: "20km", distance: 20 },
   {
     id: "hm",
     name: "HM",
@@ -51,7 +51,8 @@ export const STANDARD_DISTANCES: StandardDistance[] = [
 
 export const DEFAULT_PREFERENCES = {
   paceUnit: "min/km",
-  displayUnit: "km",
+  paceDisplay: "pace",
+  displayUnit: "mi",
   selectedDistances: STANDARD_DISTANCES.filter((d) => d.defaultEnabled).map(
     (d) => d.id
   ),

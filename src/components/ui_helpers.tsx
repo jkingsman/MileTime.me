@@ -5,8 +5,8 @@ export const DistanceNameDisplay = ({ dist }: { dist: StandardDistance }) => {
     <div>
       {dist.longName ? (
         <>
-          <span className="block lg:hidden">{dist.name}</span>
-          <span className="hidden lg:block">{dist.longName}</span>
+          <span className="block md:hidden">{dist.name}</span>
+          <span className="hidden md:block">{dist.longName}</span>
         </>
       ) : (
         <span>{dist.name}</span>

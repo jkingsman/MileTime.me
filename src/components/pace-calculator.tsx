@@ -44,6 +44,9 @@ const PaceCalculator = () => {
   const [displayUnit, setDisplayUnit] = useState(
     () => loadPreferences().displayUnit
   );
+  const [paceDisplay, setPaceDisplay] = useState(
+    () => loadPreferences().paceDisplay
+  );
   const [selectedDistances, setSelectedDistances] = useState<Set<string>>(
     () => new Set(loadPreferences().selectedDistances)
   );
@@ -65,6 +68,7 @@ const PaceCalculator = () => {
   const [hightlightedSpeeds, setHightlightedSpeeds] = useState<Set<string>>(
     () => new Set(loadPreferences().hightlightedSpeeds)
   );
+  const [settingsExpanded, toggleSettingsExpanded] = useState(false);
 
   useEffect(() => {
     const preferences = {
@@ -73,6 +77,7 @@ const PaceCalculator = () => {
       minPaceInput,
       maxPaceInput,
       paceUnit,
+      paceDisplay,
       displayUnit,
       selectedDistances: Array.from(selectedDistances),
       emphasizedDistances: Array.from(emphasizedDistances),
@@ -98,6 +103,7 @@ const PaceCalculator = () => {
     minPaceInput,
     maxPaceInput,
     paceUnit,
+    paceDisplay,
     displayUnit,
     selectedDistances,
     emphasizedDistances,
@@ -180,7 +186,8 @@ const PaceCalculator = () => {
   ]);
 
   return (
-    <div>
+    <>
+      <div className={"text-4xl p-2 bg-gray-50"}>MileTime.me</div>
       <div className="space-y-4 p-4 bg-gray-50 rounded-lg controls-container">
         {/* Pace Controls */}
         <div className="flex flex-wrap gap-4">
@@ -226,33 +233,50 @@ const PaceCalculator = () => {
           </div>
         </div>
 
+        {/* Pace Display Controls */}
+        <div className="flex items-center gap-4">
+          <label className="text-md font-medium">Pace/Speed:</label>
+          <div className="flex gap-4 flex-wrap">
+            <label htmlFor="paceAndSpeed" className="flex items-center gap-1">
+              <input
+                id="paceAndSpeed"
+                type="radio"
+                value="both"
+                checked={paceDisplay === "both"}
+                onChange={(e) => setPaceDisplay(e.target.value)}
+              />
+              both
+            </label>
+            <label htmlFor="pace" className="flex items-center gap-1">
+              <input
+                id="pace"
+                type="radio"
+                value="pace"
+                checked={paceDisplay === "pace"}
+                onChange={(e) => setPaceDisplay(e.target.value)}
+              />
+              pace
+            </label>
+            <label htmlFor="speedDisplay" className="flex items-center gap-1">
+              <input
+                id="speedDisplay"
+                type="radio"
+                value="speed"
+                checked={paceDisplay === "speed"}
+                onChange={(e) => setPaceDisplay(e.target.value)}
+              />
+              speed
+            </label>
+          </div>
+        </div>
+
         {/* Pace Unit Controls */}
         <div className="flex items-center gap-4">
           <label className="text-md font-medium">Pace Units:</label>
           <div className="flex gap-4 flex-wrap">
-            <label htmlFor="kmDisplay" className="flex items-center gap-1">
+            <label htmlFor="paceBoth" className="flex items-center gap-1">
               <input
-                id="kmDisplay"
-                type="radio"
-                value="km"
-                checked={displayUnit === "km"}
-                onChange={(e) => setDisplayUnit(e.target.value)}
-              />
-              km
-            </label>
-            <label htmlFor="mileDisplay" className="flex items-center gap-1">
-              <input
-                id="mileDisplay"
-                type="radio"
-                value="mi"
-                checked={displayUnit === "mi"}
-                onChange={(e) => setDisplayUnit(e.target.value)}
-              />
-              mi
-            </label>
-            <label htmlFor="bothDisplay" className="flex items-center gap-1">
-              <input
-                id="bothDisplay"
+                id="paceBoth"
                 type="radio"
                 value="both"
                 checked={displayUnit === "both"}
@@ -260,12 +284,35 @@ const PaceCalculator = () => {
               />
               km + mi
             </label>
+            <label htmlFor="paceKm" className="flex items-center gap-1">
+              <input
+                id="paceKm"
+                type="radio"
+                value="km"
+                checked={displayUnit === "km"}
+                onChange={(e) => setDisplayUnit(e.target.value)}
+              />
+              km
+            </label>
+            <label htmlFor="paceMi" className="flex items-center gap-1">
+              <input
+                id="paceMi"
+                type="radio"
+                value="mi"
+                checked={displayUnit === "mi"}
+                onChange={(e) => setDisplayUnit(e.target.value)}
+              />
+              mi
+            </label>
           </div>
         </div>
+      </div>
 
-        <details className={"space-y-4"}>
-          <summary className={"text-lg cursor-pointer"}>Show more configuration...</summary>
-
+      <details className={"p-2 bg-gray-50"} open={settingsExpanded}>
+        <summary className={"text-lg cursor-pointer"} onClick={(e) => { e.preventDefault(); toggleSettingsExpanded(!settingsExpanded); return false; }}>
+          {settingsExpanded ? "Hide configuration" : "Show more configuration..."}
+        </summary>
+        <div className={"p-2 mt-0 space-y-2"}>
           {/* Interval Controls */}
           <div className="flex items-center gap-4">
             <label htmlFor="rowInterval" className="text-md font-medium">
@@ -360,37 +407,32 @@ const PaceCalculator = () => {
 
 
           {/* Distance Emphasis */}
-          <div className="flex items-center justify-between gap-4">
-            <div className="space-y-2">
-              <label className="text-md font-medium block">Emphasize Distances:</label>
-              <div className="flex flex-wrap gap-4">
-                {STANDARD_DISTANCES.filter((dist) => selectedDistances.has(dist.id)).map((dist) => (
-                  <label key={dist.id} className="flex items-center gap-1">
-                    <input
-                      aria-label={dist.longName ?? dist.name}
-                      type="checkbox"
-                      checked={emphasizedDistances.has(dist.id)}
-                      onChange={() => handleSetToggle(dist.id, emphasizedDistances, setEmphasizedDistances)}
-                    />
-                    <DistanceNameDisplay dist={dist} />
-                  </label>
-                ))}
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={resetPage}
-                className="text-xs font-medium bg-transparent hover:bg-yellow-500 text-yellow-700 font-semibold hover:text-white py-2 px-4 border border-yellow-500 hover:border-transparent rounded"
-              >
-                Reset Page
-              </button>
+          <div className="space-y-2">
+            <label className="text-md font-medium block">Emphasize Distances:</label>
+            <div className="flex flex-wrap gap-4">
+              {STANDARD_DISTANCES.filter((dist) => selectedDistances.has(dist.id)).map((dist) => (
+                <label key={dist.id} className="flex items-center gap-1">
+                  <input
+                    aria-label={dist.longName ?? dist.name}
+                    type="checkbox"
+                    checked={emphasizedDistances.has(dist.id)}
+                    onChange={() => handleSetToggle(dist.id, emphasizedDistances, setEmphasizedDistances)}
+                  />
+                  <DistanceNameDisplay dist={dist} />
+                </label>
+              ))}
             </div>
           </div>
-        </details>
-
-
-
-      </div>
+          <div className="flex gap-2 pt-2">
+            <button
+              onClick={resetPage}
+              className="text-xs font-medium bg-transparent hover:bg-yellow-500 text-yellow-700 font-semibold hover:text-white py-2 px-4 border border-yellow-500 hover:border-transparent rounded"
+            >
+              Reset Page
+            </button>
+          </div>
+        </div>
+      </details>
 
       <div className="overflow-x-auto table-container">
         <table className="min-w-full border-collapse table-fixed text-xs md:text-sm">
@@ -398,30 +440,38 @@ const PaceCalculator = () => {
             <tr>
               {displayUnit !== "mi" && (
                 <>
-                  <th className="border p-2 bg-teal-100 w-[5vw]">
-                    Pace
-                    <br />
-                    (min/km)
-                  </th>
-                  <th className="border p-2 bg-sky-100 w-[5vw]">
-                    Speed
-                    <br />
-                    (km/h)
-                  </th>
+                  {(paceDisplay == "both" || paceDisplay == "pace") && (
+                    <th className="border p-1 py-2 sm:p-2 bg-teal-100 w-[5vw]">
+                      Pace
+                      <br />
+                      (min/km)
+                    </th>
+                  )}
+                  {(paceDisplay == "both" || paceDisplay == "speed") && (
+                    <th className="border p-1 py-2 sm:p-2 bg-sky-100 w-[5vw]">
+                      Speed
+                      <br />
+                      (km/h)
+                    </th>
+                  )}
                 </>
               )}
               {displayUnit !== "km" && (
                 <>
-                  <th className="border p-2 bg-teal-100 w-[5vw]">
-                    Pace
-                    <br />
-                    (min/mi)
-                  </th>
-                  <th className="border p-2 bg-sky-100 w-[5vw]">
-                    Speed
-                    <br />
-                    (mph)
-                  </th>
+                  {(paceDisplay == "both" || paceDisplay == "pace") && (
+                    <th className="border p-1 py-2 sm:p-2 bg-teal-100 w-[5vw]">
+                      Pace
+                      <br />
+                      (min/mi)
+                    </th>
+                  )}
+                  {(paceDisplay == "both" || paceDisplay == "speed") && (
+                    <th className="border p-1 py-2 sm:p-2 bg-sky-100 w-[5vw]">
+                      Speed
+                      <br />
+                      (mph)
+                    </th>
+                  )}
                 </>
               )}
               {STANDARD_DISTANCES.map(
@@ -429,14 +479,14 @@ const PaceCalculator = () => {
                   selectedDistances.has(dist.id) && (
                     <th
                       key={dist.id}
-                      className={"border p-2 w-[10vw]"}
+                      className={"border p-1 py-2 sm:p-2 print:text-lg text-sm md:text-lg w-[10vw]"}
                     >
                       <DistanceNameDisplay dist={dist} />
                     </th>
                   )
               )}
               {customDistance.enabled && (
-                <th className="border p-2 w-[10vw]">
+                <th className="border p-1 py-2 sm:p-2 w-[10vw]">
                   {customDistance.value} {customDistance.unit}
                 </th>
               )}
@@ -457,50 +507,62 @@ const PaceCalculator = () => {
               >
                 {displayUnit !== "mi" && (
                   <>
-                    <td
-                      className={
-                        hightlightedSpeeds.has(row.kph)
-                          ? "border p-2 text-center bg-yellow-100"
-                          : index % 2 === 0
-                            ? "border p-2 text-center bg-teal-50"
-                            : "border p-2 text-center bg-teal-100"
-                      }
-                    >
-                      {row.minPerKm}
-                    </td>
-                    <td
-                      className={
-                        hightlightedSpeeds.has(row.kph)
-                          ? "border p-2 text-center bg-yellow-100"
-                          : index % 2 === 0
-                            ? "border p-2 text-center bg-sky-50"
-                            : "border p-2 text-center bg-sky-100"
-                      }
-                    >
-                      {row.kph}
-                    </td>
+                    {(paceDisplay == "both" || paceDisplay == "pace") && (
+                      <td
+                        className={
+                          hightlightedSpeeds.has(row.kph)
+                            ? "border p-1 py-2 sm:p-2 text-center bg-yellow-100"
+                            : index % 2 === 0
+                              ? "border p-1 py-2 sm:p-2 text-center bg-teal-50"
+                              : "border p-1 py-2 sm:p-2 text-center bg-teal-100"
+                        }
+                      >
+                        {row.minPerKm}
+                      </td>
+                    )}
+                    {(paceDisplay == "both" || paceDisplay == "speed") && (
+                      <td
+                        className={
+                          hightlightedSpeeds.has(row.kph)
+                            ? "border p-1 py-2 sm:p-2 text-center bg-yellow-100"
+                            : index % 2 === 0
+                              ? "border p-1 py-2 sm:p-2 text-center bg-sky-50"
+                              : "border p-1 py-2 sm:p-2 text-center bg-sky-100"
+                        }
+                      >
+                        {row.kph}
+                      </td>
+                    )}
                   </>
                 )}
                 {displayUnit !== "km" && (
                   <>
-                    <td
-                      className={
-                        hightlightedSpeeds.has(row.kph)
-                          ? "border p-2 text-center bg-yellow-100"
-                          : "border p-2 text-center bg-teal-50"
-                      }
-                    >
-                      {row.minPerMile}
-                    </td>
-                    <td
-                      className={
-                        hightlightedSpeeds.has(row.kph)
-                          ? "border p-2 text-center bg-yellow-100"
-                          : "border p-2 text-center bg-sky-50"
-                      }
-                    >
-                      {row.mph}
-                    </td>
+                    {(paceDisplay == "both" || paceDisplay == "pace") && (
+                      <td
+                        className={
+                          hightlightedSpeeds.has(row.kph)
+                            ? "border p-1 py-2 sm:p-2 text-center bg-yellow-100"
+                            : index % 2 === 0
+                              ? "border p-1 py-2 sm:p-2 text-center bg-teal-50"
+                              : "border p-1 py-2 sm:p-2 text-center bg-teal-100"
+                        }
+                      >
+                        {row.minPerMile}
+                      </td>
+                    )}
+                    {(paceDisplay == "both" || paceDisplay == "speed") && (
+                      <td
+                        className={
+                          hightlightedSpeeds.has(row.kph)
+                            ? "border p-1 py-2 sm:p-2 text-center bg-yellow-100"
+                            : index % 2 === 0
+                              ? "border p-1 py-2 sm:p-2 text-center bg-sky-50"
+                              : "border p-1 py-2 sm:p-2 text-center bg-sky-100"
+                        }
+                      >
+                        {row.mph}
+                      </td>
+                    )}
                   </>
                 )}
                 {STANDARD_DISTANCES.map(
@@ -508,7 +570,7 @@ const PaceCalculator = () => {
                     selectedDistances.has(dist.id) && (
                       <td
                         key={dist.id}
-                        className={`border p-2 text-center ${emphasizedDistances.has(dist.id) ? "font-bold" : ""
+                        className={`border p-1 py-2 sm:p-2 text-center ${emphasizedDistances.has(dist.id) ? "font-bold" : ""
                           }`}
                       >
                         {row.standardTimes[i]}
@@ -516,14 +578,14 @@ const PaceCalculator = () => {
                     )
                 )}
                 {customDistance.enabled && (
-                  <td className="border p-2 text-center">{row.customTime}</td>
+                  <td className="border p-1 py-2 sm:p-2 text-center">{row.customTime}</td>
                 )}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-    </div>
+    </>
   );
 };
 
