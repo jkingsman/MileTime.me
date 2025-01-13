@@ -1,7 +1,13 @@
 import { useMemo, useState, useEffect } from "react";
 
 import {KM_TO_MILES, MILE_TO_KM, STORAGE_KEY, STORAGE_VERSION_KEY, STORAGE_VERSION, STANDARD_DISTANCES, DEFAULT_PREFERENCES, CustomDistance} from "./constants";
-import {formatPace, parsePace, formatTime, resetPage} from './utils';
+import {
+  formatPace,
+  parsePace,
+  formatTime,
+  resetPage,
+  countDecimals,
+} from "./utils";
 
 const PaceCalculator = () => {
   // Load preferences from localStorage or use defaults
@@ -161,7 +167,7 @@ const PaceCalculator = () => {
       kph <= minPaceValueParsed;
       kph += interval
     ) {
-      kph = Number(kph.toFixed(3));
+      kph = Number(kph.toFixed(countDecimals(interval)));
 
       const mph = kph * KM_TO_MILES;
       const minPerKm = 60 / kph;
@@ -180,8 +186,8 @@ const PaceCalculator = () => {
         : null;
 
       data.push({
-        kph: kph.toFixed(1),
-        mph: mph.toFixed(1),
+        kph: kph.toFixed(countDecimals(interval)),
+        mph: mph.toFixed(countDecimals(interval)),
         minPerKm: formatPace(minPerKm * 60),
         minPerMile: formatPace(minPerMile * 60),
         minPerKmRaw: minPerKm,
