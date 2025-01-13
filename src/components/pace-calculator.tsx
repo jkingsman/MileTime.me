@@ -239,8 +239,8 @@ const PaceCalculator = () => {
 
   return (
     <>
-      <div className="text-4xl p-2 bg-gray-50">MileTime.me</div>
-      <div className="space-y-4 p-4 bg-gray-50 rounded-lg controls-container">
+      <div className="text-4xl p-2 bg-gray-50 print:hidden">MileTime.me</div>
+      <div className="space-y-4 p-4 bg-gray-50 rounded-lg print:hidden">
         {/* Pace Controls */}
         <div className="flex flex-wrap gap-4">
           <div className="flex items-center gap-2">
@@ -292,7 +292,10 @@ const PaceCalculator = () => {
         </div>
       </div>
 
-      <details className="px-2 bg-gray-50" open={paceSettingsExpanded}>
+      <details
+        className="px-2 bg-gray-50 print:hidden"
+        open={paceSettingsExpanded}
+      >
         <summary
           className="text-lg cursor-pointer"
           onClick={(e) => {
@@ -379,7 +382,10 @@ const PaceCalculator = () => {
         </div>
       </details>
 
-      <details className="px-2 bg-gray-50" open={distanceSettingsExpanded}>
+      <details
+        className="px-2 bg-gray-50 print:hidden"
+        open={distanceSettingsExpanded}
+      >
         <summary
           className="text-lg cursor-pointer"
           onClick={(e) => {
@@ -491,7 +497,11 @@ const PaceCalculator = () => {
           </div>
         </div>
       </details>
-      <details className="px-2 bg-gray-50" open={tableSettingsExpanded}>
+
+      <details
+        className="px-2 bg-gray-50 print:hidden"
+        open={tableSettingsExpanded}
+      >
         <summary
           className="text-lg cursor-pointer"
           onClick={(e) => {
@@ -565,7 +575,7 @@ const PaceCalculator = () => {
           </div>
         </div>
       </details>
-      <div className="p-2 bg-gray-50 flex gap-2 pt-2">
+      <div className="p-2 bg-gray-50 flex gap-2 pt-2 print:hidden">
         <button
           onClick={resetPage}
           className="text-xs font-medium bg-transparent hover:bg-yellow-500 text-yellow-700 font-semibold hover:text-white py-2 px-4 border border-yellow-500 hover:border-transparent rounded"
@@ -586,7 +596,7 @@ const PaceCalculator = () => {
           ref={tableContainer}
           className="min-w-full border-collapse table-fixed text-xs md:text-sm overflow-auto"
         >
-          <thead className="sticky -top-1">
+          <thead className="sticky -top-1 z-50">
             <tr>
               {paceDisplayUnit !== "mi" && (
                 <>

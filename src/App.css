@@ -7,10 +7,6 @@
     print-color-adjust: exact;
   }
 
-  .controls-container {
-    display: none !important;
-  }
-
   .table-container {
     overflow-x: visible !important;
     page-break-inside: auto !important;
@@ -46,7 +42,7 @@
 
 @media screen {
   .footer-print-visible {
-    display: none;;
+    display: none;
   }
 }
 
