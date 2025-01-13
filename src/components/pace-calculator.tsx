@@ -84,6 +84,7 @@ const PaceCalculator = () => {
   const [hightlightedSpeeds, setHightlightedSpeeds] = useState<Set<string>>(
     () => new Set(loadPreferences().hightlightedSpeeds)
   );
+    const [sortAsc, setSortAsc] = useState(() => loadPreferences().sortAsc);
   const [settingsExpanded, toggleSettingsExpanded] = useState(false);
   const [hasOverflow, setHasOverflow] = useState(false);
   const tableContainer = useRef(null);
@@ -120,6 +121,7 @@ const PaceCalculator = () => {
       intervalInput,
       intervalUnit,
       hightlightedSpeeds: Array.from(hightlightedSpeeds),
+      sortAsc,
     };
 
     try {
@@ -146,6 +148,7 @@ const PaceCalculator = () => {
     intervalInput,
     intervalUnit,
     hightlightedSpeeds,
+    sortAsc,
   ]);
 
   const handleSetToggle = (
@@ -416,6 +419,33 @@ const PaceCalculator = () => {
             </select>
           </div>
 
+          {/* Order Controls */}
+          <div className="flex items-center gap-4">
+            <label className="text-md font-medium">Table Order:</label>
+            <div className="flex gap-4 flex-wrap">
+              <label htmlFor="sortDesc" className="flex items-center gap-1">
+                <input
+                  id="sortDesc"
+                  type="radio"
+                  value="descending"
+                  checked={!sortAsc}
+                  onChange={() => setSortAsc(false)}
+                />
+                desc
+              </label>
+              <label htmlFor="sortAsc" className="flex items-center gap-1">
+                <input
+                  id="sortAsc"
+                  type="radio"
+                  value="ascending"
+                  checked={sortAsc}
+                  onChange={() => setSortAsc(true)}
+                />
+                asc
+              </label>
+            </div>
+          </div>
+
           {/* Distance Selection */}
           <div className="space-y-2">
             <label className="text-md font-medium block">Show Distances:</label>
@@ -527,7 +557,8 @@ const PaceCalculator = () => {
       {hasOverflow && (
         <div className="text-amber-600 p-2 text-sm">
           Warning! Tables wider than the screen may not display correctly on
-          mobile devices. Please use a larger screen or landscape orientation for best results.
+          mobile devices. Please use a larger screen or landscape orientation
+          for best results.
         </div>
       )}
 
@@ -593,104 +624,107 @@ const PaceCalculator = () => {
             </tr>
           </thead>
           <tbody>
-            {paceData.map((row, index) => (
-              <tr
-                key={row.kph}
-                className={
-                  hightlightedSpeeds.has(row.kph)
-                    ? "bg-yellow-100"
-                    : index % 2 === 0
-                    ? "bg-white"
-                    : "bg-gray-50"
-                }
-                onClick={() =>
-                  handleSetToggle(
-                    row.kph,
-                    hightlightedSpeeds,
-                    setHightlightedSpeeds
-                  )
-                }
-              >
-                {paceDisplayUnit !== "mi" && (
-                  <>
-                    {(paceDisplay == "both" || paceDisplay == "pace") && (
-                      <td
-                        className={
-                          hightlightedSpeeds.has(row.kph)
-                            ? "border p-1 py-2 sm:p-2 text-center bg-yellow-100"
-                            : index % 2 === 0
-                            ? "border p-1 py-2 sm:p-2 text-center bg-teal-50"
-                            : "border p-1 py-2 sm:p-2 text-center bg-teal-100"
-                        }
-                      >
-                        {row.minPerKm}
-                      </td>
-                    )}
-                    {(paceDisplay == "both" || paceDisplay == "speed") && (
-                      <td
-                        className={
-                          hightlightedSpeeds.has(row.kph)
-                            ? "border p-1 py-2 sm:p-2 text-center bg-yellow-100"
-                            : index % 2 === 0
-                            ? "border p-1 py-2 sm:p-2 text-center bg-sky-50"
-                            : "border p-1 py-2 sm:p-2 text-center bg-sky-100"
-                        }
-                      >
-                        {row.kph}
-                      </td>
-                    )}
-                  </>
-                )}
-                {paceDisplayUnit !== "km" && (
-                  <>
-                    {(paceDisplay == "both" || paceDisplay == "pace") && (
-                      <td
-                        className={
-                          hightlightedSpeeds.has(row.kph)
-                            ? "border p-1 py-2 sm:p-2 text-center bg-yellow-100"
-                            : index % 2 === 0
-                            ? "border p-1 py-2 sm:p-2 text-center bg-teal-50"
-                            : "border p-1 py-2 sm:p-2 text-center bg-teal-100"
-                        }
-                      >
-                        {row.minPerMile}
-                      </td>
-                    )}
-                    {(paceDisplay == "both" || paceDisplay == "speed") && (
-                      <td
-                        className={
-                          hightlightedSpeeds.has(row.kph)
-                            ? "border p-1 py-2 sm:p-2 text-center bg-yellow-100"
-                            : index % 2 === 0
-                            ? "border p-1 py-2 sm:p-2 text-center bg-sky-50"
-                            : "border p-1 py-2 sm:p-2 text-center bg-sky-100"
-                        }
-                      >
-                        {row.mph}
-                      </td>
-                    )}
-                  </>
-                )}
-                {STANDARD_DISTANCES.map(
-                  (dist, i) =>
-                    selectedDistances.has(dist.id) && (
-                      <td
-                        key={dist.id}
-                        className={`border p-1 py-2 sm:p-2 text-center ${
-                          emphasizedDistances.has(dist.id) ? "font-bold" : ""
-                        }`}
-                      >
-                        {row.standardTimes[i]}
-                      </td>
+            {/* Not quite ES2023 safe yet... .slice().reverse() instead of .toReverse() */}
+            {(sortAsc ? paceData : paceData.slice().reverse()).map(
+              (row, index) => (
+                <tr
+                  key={row.kph}
+                  className={
+                    hightlightedSpeeds.has(row.kph)
+                      ? "bg-yellow-100"
+                      : index % 2 === 0
+                      ? "bg-white"
+                      : "bg-gray-50"
+                  }
+                  onClick={() =>
+                    handleSetToggle(
+                      row.kph,
+                      hightlightedSpeeds,
+                      setHightlightedSpeeds
                     )
-                )}
-                {customDistance.enabled && (
-                  <td className="border p-1 py-2 sm:p-2 text-center">
-                    {row.customTime}
-                  </td>
-                )}
-              </tr>
-            ))}
+                  }
+                >
+                  {paceDisplayUnit !== "mi" && (
+                    <>
+                      {(paceDisplay == "both" || paceDisplay == "pace") && (
+                        <td
+                          className={
+                            hightlightedSpeeds.has(row.kph)
+                              ? "border p-1 py-2 sm:p-2 text-center bg-yellow-100"
+                              : index % 2 === 0
+                              ? "border p-1 py-2 sm:p-2 text-center bg-teal-50"
+                              : "border p-1 py-2 sm:p-2 text-center bg-teal-100"
+                          }
+                        >
+                          {row.minPerKm}
+                        </td>
+                      )}
+                      {(paceDisplay == "both" || paceDisplay == "speed") && (
+                        <td
+                          className={
+                            hightlightedSpeeds.has(row.kph)
+                              ? "border p-1 py-2 sm:p-2 text-center bg-yellow-100"
+                              : index % 2 === 0
+                              ? "border p-1 py-2 sm:p-2 text-center bg-sky-50"
+                              : "border p-1 py-2 sm:p-2 text-center bg-sky-100"
+                          }
+                        >
+                          {row.kph}
+                        </td>
+                      )}
+                    </>
+                  )}
+                  {paceDisplayUnit !== "km" && (
+                    <>
+                      {(paceDisplay == "both" || paceDisplay == "pace") && (
+                        <td
+                          className={
+                            hightlightedSpeeds.has(row.kph)
+                              ? "border p-1 py-2 sm:p-2 text-center bg-yellow-100"
+                              : index % 2 === 0
+                              ? "border p-1 py-2 sm:p-2 text-center bg-teal-50"
+                              : "border p-1 py-2 sm:p-2 text-center bg-teal-100"
+                          }
+                        >
+                          {row.minPerMile}
+                        </td>
+                      )}
+                      {(paceDisplay == "both" || paceDisplay == "speed") && (
+                        <td
+                          className={
+                            hightlightedSpeeds.has(row.kph)
+                              ? "border p-1 py-2 sm:p-2 text-center bg-yellow-100"
+                              : index % 2 === 0
+                              ? "border p-1 py-2 sm:p-2 text-center bg-sky-50"
+                              : "border p-1 py-2 sm:p-2 text-center bg-sky-100"
+                          }
+                        >
+                          {row.mph}
+                        </td>
+                      )}
+                    </>
+                  )}
+                  {STANDARD_DISTANCES.map(
+                    (dist, i) =>
+                      selectedDistances.has(dist.id) && (
+                        <td
+                          key={dist.id}
+                          className={`border p-1 py-2 sm:p-2 text-center ${
+                            emphasizedDistances.has(dist.id) ? "font-bold" : ""
+                          }`}
+                        >
+                          {row.standardTimes[i]}
+                        </td>
+                      )
+                  )}
+                  {customDistance.enabled && (
+                    <td className="border p-1 py-2 sm:p-2 text-center">
+                      {row.customTime}
+                    </td>
+                  )}
+                </tr>
+              )
+            )}
           </tbody>
         </table>
       </div>
