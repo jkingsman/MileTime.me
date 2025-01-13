@@ -1,111 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 
-const MARATHON_DISTANCE = 42.195;
-const KM_TO_MILES = 0.621371;
-const MILE_TO_KM = 1 / KM_TO_MILES;
-const STORAGE_KEY = "paceCalculatorPreferences";
-
-const STORAGE_VERSION_KEY = "storageVersion";
-const STORAGE_VERSION = 5;
-
-const STANDARD_DISTANCES = [
-  {
-    id: "5k",
-    name: "5 km",
-    distance: 5,
-    important: true,
-    defaultEnabled: true,
-  },
-  {
-    id: "10k",
-    name: "10 km",
-    distance: 10,
-    defaultEnabled: true,
-  },
-  { id: "15k", name: "15 km", distance: 15 },
-  { id: "20k", name: "20 km", distance: 20, defaultEnabled: true },
-  {
-    id: "hm",
-    name: "HM",
-    distance: MARATHON_DISTANCE / 2,
-    important: true,
-    defaultEnabled: true,
-  },
-  { id: "25k", name: "25 km", distance: 25 },
-  { id: "30k", name: "30 km", distance: 30, defaultEnabled: true },
-  { id: "35k", name: "35 km", distance: 35 },
-  { id: "40k", name: "40 km", distance: 40 },
-  {
-    id: "m",
-    name: "M",
-    distance: MARATHON_DISTANCE,
-    important: true,
-    defaultEnabled: true,
-  },
-  { id: "45k", name: "45 km", distance: 45 },
-  { id: "50k", name: "50 km", distance: 50 },
-  { id: "100k", name: "100 km", distance: 100 },
-];
-
-const DEFAULT_PREFERENCES = {
-  paceUnit: "min/km",
-  displayUnit: "both",
-  selectedDistances: STANDARD_DISTANCES.filter((d) => d.defaultEnabled).map((d) => d.id),
-  customDistance: {
-    enabled: false,
-    value: 5,
-    unit: "mi",
-  },
-
-  // duplicates for validation
-  intervalValue: "0.1",
-  intervalInput: "0.1",
-  minPaceValue: "2:51",
-  minPaceInput: "2:51",
-  maxPaceValue: "8:34",
-  maxPaceInput: "8:34",
-
-  intervalUnit: "km/h",
-  highlightedSpeeds: [],
-};
-
-interface CustomDistance {
-  enabled?: boolean;
-  value?: number;
-  unit?: string;
-}
-
-const formatPace = (paceInSeconds: number) => {
-  const minutes = Math.floor(paceInSeconds / 60);
-  const seconds = Math.round(paceInSeconds % 60);
-  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-};
-
-const parsePace = (paceStr: string) => {
-  const [minutes, seconds] = paceStr.split(":");
-  if (!minutes || !seconds) {
-    return NaN;
-  }
-  return parseFloat(minutes) + parseFloat(seconds) / 60;
-};
-
-const formatTime = (timeInSeconds: number) => {
-  const hours = Math.floor(timeInSeconds / 3600);
-  const minutes = Math.floor((timeInSeconds % 3600) / 60);
-  const seconds = Math.round(timeInSeconds % 60);
-
-  if (hours > 0) {
-    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds
-      .toString()
-      .padStart(2, "0")}`;
-  }
-  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-};
-
-const resetPage = () => {
-  localStorage.clear();
-  window.location.reload();
-}
+import {KM_TO_MILES, MILE_TO_KM, STORAGE_KEY, STORAGE_VERSION_KEY, STORAGE_VERSION, STANDARD_DISTANCES, DEFAULT_PREFERENCES, CustomDistance} from "./constants";
+import {formatPace, parsePace, formatTime, resetPage} from './utils';
 
 const PaceCalculator = () => {
   // Load preferences from localStorage or use defaults
@@ -305,7 +201,7 @@ const PaceCalculator = () => {
   ]);
 
   return (
-    <div className="w-full max-w-full space-y-4">
+    <div>
       <div className="space-y-4 p-4 bg-gray-50 rounded-lg controls-container">
         {/* Pace Controls */}
         <div className="flex flex-wrap gap-4">
@@ -622,38 +518,6 @@ const PaceCalculator = () => {
             ))}
           </tbody>
         </table>
-      </div>
-      <div className="text-center text-sm text-gray-600 mx-auto max-w-2xl p-4 footer-print-visible">
-        from MileTime.me, made with love and open source by Jack Kingsman
-      </div>
-      <div className="text-center text-sm text-gray-600 mx-auto max-w-2xl p-4 footer">
-        made with love and{" "}
-        <a
-          href="https://github.com/jkingsman/MileTime.me"
-          target="_blank"
-          className="text-blue-600 hover:text-blue-800 transition-colors duration-200 underline decoration-gray-300 hover:decoration-blue-800"
-        >
-          open source
-        </a>{" "}
-        by{" "}
-        <a
-          href="https://jacksbrain.com"
-          target="_blank"
-          className="text-blue-600 hover:text-blue-800 transition-colors duration-200 underline decoration-gray-300 hover:decoration-blue-800"
-        >
-          Jack Kingsman
-        </a>
-        .
-        <br />
-        this site is free, and ad-free, forever;{" "}
-        <a
-          href="https://ko-fi.com/jackkingsman"
-          target="_blank"
-          className="text-blue-600 hover:text-blue-800 transition-colors duration-200 underline decoration-gray-300 hover:decoration-blue-800"
-        >
-          donations to help offset server costs
-        </a>{" "}
-        are much appreciated :)
       </div>
     </div>
   );
