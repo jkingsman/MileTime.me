@@ -85,7 +85,12 @@ const PaceCalculator = () => {
     () => new Set(loadPreferences().hightlightedSpeeds)
   );
     const [sortAsc, setSortAsc] = useState(() => loadPreferences().sortAsc);
-  const [settingsExpanded, toggleSettingsExpanded] = useState(false);
+
+  const [paceSettingsExpanded, togglePaceSettingsExpanded] = useState(false);
+  const [distanceSettingsExpanded, toggleDistanceSettingsExpanded] =
+    useState(false);
+  const [tableSettingsExpanded, toggleTableSettingsExpanded] = useState(false);
+
   const [hasOverflow, setHasOverflow] = useState(false);
   const tableContainer = useRef(null);
 
@@ -295,9 +300,22 @@ const PaceCalculator = () => {
             </select>
           </div>
         </div>
+      </div>
+
+      <details className="px-2 bg-gray-50" open={paceSettingsExpanded}>
+        <summary
+          className="text-lg cursor-pointer"
+          onClick={(e) => {
+            e.preventDefault();
+            togglePaceSettingsExpanded(!paceSettingsExpanded);
+            return false;
+          }}
+        >
+          Pace Config
+        </summary>
 
         {/* Pace Display Controls */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 p-2 mt-0 space-y-2">
           <label className="text-md font-medium">Pace/Speed:</label>
           <div className="flex gap-4 flex-wrap">
             <label htmlFor="paceAndSpeed" className="flex items-center gap-1">
@@ -334,7 +352,7 @@ const PaceCalculator = () => {
         </div>
 
         {/* Pace Unit Controls */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 p-2 mt-0">
           <label className="text-md font-medium">Pace Units:</label>
           <div className="flex gap-4 flex-wrap">
             <label htmlFor="paceBoth" className="flex items-center gap-1">
@@ -369,83 +387,20 @@ const PaceCalculator = () => {
             </label>
           </div>
         </div>
-      </div>
+      </details>
 
-      <details className="p-2 bg-gray-50" open={settingsExpanded}>
+      <details className="px-2 bg-gray-50" open={distanceSettingsExpanded}>
         <summary
           className="text-lg cursor-pointer"
           onClick={(e) => {
             e.preventDefault();
-            toggleSettingsExpanded(!settingsExpanded);
+            toggleDistanceSettingsExpanded(!distanceSettingsExpanded);
             return false;
           }}
         >
-          {settingsExpanded
-            ? "Hide configuration"
-            : "Show more configuration..."}
+          Distance Config
         </summary>
         <div className="p-2 mt-0 space-y-2">
-          {/* Interval Controls */}
-          <div className="flex items-center gap-4">
-            <label htmlFor="rowInterval" className="text-md font-medium">
-              Row Interval:
-            </label>
-            <input
-              id="rowInterval"
-              type="number"
-              step="0.1"
-              min="0"
-              value={intervalInput}
-              onChange={(e) =>
-                handleNumericalValidatableChange(
-                  e.target.value,
-                  parseFloat,
-                  setIntervalInput,
-                  setIntervalValue
-                )
-              }
-              className={`border rounded px-2 py-1 w-24 ${
-                intervalInput === intervalValue ? "bg-white" : "bg-red-50"
-              }`}
-            />
-            <select
-              aria-label="Row interval unit"
-              value={intervalUnit}
-              onChange={(e) => setIntervalUnit(e.target.value)}
-              className="border rounded px-2 py-1"
-            >
-              <option value="km/h">km/h</option>
-              <option value="mi/h">mi/h</option>
-            </select>
-          </div>
-
-          {/* Order Controls */}
-          <div className="flex items-center gap-4">
-            <label className="text-md font-medium">Table Order:</label>
-            <div className="flex gap-4 flex-wrap">
-              <label htmlFor="sortDesc" className="flex items-center gap-1">
-                <input
-                  id="sortDesc"
-                  type="radio"
-                  value="descending"
-                  checked={!sortAsc}
-                  onChange={() => setSortAsc(false)}
-                />
-                desc
-              </label>
-              <label htmlFor="sortAsc" className="flex items-center gap-1">
-                <input
-                  id="sortAsc"
-                  type="radio"
-                  value="ascending"
-                  checked={sortAsc}
-                  onChange={() => setSortAsc(true)}
-                />
-                asc
-              </label>
-            </div>
-          </div>
-
           {/* Distance Selection */}
           <div className="space-y-2">
             <label className="text-md font-medium block">Show Distances:</label>
@@ -544,16 +499,90 @@ const PaceCalculator = () => {
               ))}
             </div>
           </div>
-          <div className="flex gap-2 pt-2">
-            <button
-              onClick={resetPage}
-              className="text-xs font-medium bg-transparent hover:bg-yellow-500 text-yellow-700 font-semibold hover:text-white py-2 px-4 border border-yellow-500 hover:border-transparent rounded"
+        </div>
+      </details>
+      <details className="px-2 bg-gray-50" open={tableSettingsExpanded}>
+        <summary
+          className="text-lg cursor-pointer"
+          onClick={(e) => {
+            e.preventDefault();
+            toggleTableSettingsExpanded(!tableSettingsExpanded);
+            return false;
+          }}
+        >
+          Table Config
+        </summary>
+        <div className="p-2 mt-0 space-y-2">
+          {/* Interval Controls */}
+          <div className="flex items-center gap-4">
+            <label htmlFor="rowInterval" className="text-md font-medium">
+              Row Interval:
+            </label>
+            <input
+              id="rowInterval"
+              type="number"
+              step="0.1"
+              min="0"
+              value={intervalInput}
+              onChange={(e) =>
+                handleNumericalValidatableChange(
+                  e.target.value,
+                  parseFloat,
+                  setIntervalInput,
+                  setIntervalValue
+                )
+              }
+              className={`border rounded px-2 py-1 w-24 ${
+                intervalInput === intervalValue ? "bg-white" : "bg-red-50"
+              }`}
+            />
+            <select
+              aria-label="Row interval unit"
+              value={intervalUnit}
+              onChange={(e) => setIntervalUnit(e.target.value)}
+              className="border rounded px-2 py-1"
             >
-              Reset Page
-            </button>
+              <option value="km/h">km/h</option>
+              <option value="mi/h">mi/h</option>
+            </select>
+          </div>
+
+          {/* Order Controls */}
+          <div className="flex items-center gap-4">
+            <label className="text-md font-medium">Table Order:</label>
+            <div className="flex gap-4 flex-wrap">
+              <label htmlFor="sortDesc" className="flex items-center gap-1">
+                <input
+                  id="sortDesc"
+                  type="radio"
+                  value="descending"
+                  checked={!sortAsc}
+                  onChange={() => setSortAsc(false)}
+                />
+                desc
+              </label>
+              <label htmlFor="sortAsc" className="flex items-center gap-1">
+                <input
+                  id="sortAsc"
+                  type="radio"
+                  value="ascending"
+                  checked={sortAsc}
+                  onChange={() => setSortAsc(true)}
+                />
+                asc
+              </label>
+            </div>
           </div>
         </div>
       </details>
+      <div className="p-2 bg-gray-50 flex gap-2 pt-2">
+        <button
+          onClick={resetPage}
+          className="text-xs font-medium bg-transparent hover:bg-yellow-500 text-yellow-700 font-semibold hover:text-white py-2 px-4 border border-yellow-500 hover:border-transparent rounded"
+        >
+          Reset Page
+        </button>
+      </div>
       {hasOverflow && (
         <div className="text-amber-600 p-2 text-sm">
           Warning! Tables wider than the screen may not display correctly on
