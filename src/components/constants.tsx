@@ -50,9 +50,9 @@ export const STANDARD_DISTANCES: StandardDistance[] = [
 ];
 
 export const DEFAULT_PREFERENCES = {
-  paceUnit: "min/km",
+  paceBoundsUnit: "min/km",
   paceDisplay: "pace",
-  displayUnit: "mi",
+  paceDisplayUnit: "both",
   selectedDistances: STANDARD_DISTANCES.filter((d) => d.defaultEnabled).map(
     (d) => d.id
   ),

@@ -56,9 +56,9 @@ const PaceCalculator = () => {
     () => loadPreferences().maxPaceInput
   );
 
-  const [paceUnit, setPaceUnit] = useState(() => loadPreferences().paceUnit);
-  const [displayUnit, setDisplayUnit] = useState(
-    () => loadPreferences().displayUnit
+  const [paceBoundsUnit, setpaceBoundsUnit] = useState(() => loadPreferences().paceBoundsUnit);
+  const [paceDisplayUnit, setpaceDisplayUnit] = useState(
+    () => loadPreferences().paceDisplayUnit
   );
   const [paceDisplay, setPaceDisplay] = useState(
     () => loadPreferences().paceDisplay
@@ -92,9 +92,9 @@ const PaceCalculator = () => {
       maxPaceValue,
       minPaceInput,
       maxPaceInput,
-      paceUnit,
+      paceBoundsUnit,
       paceDisplay,
-      displayUnit,
+      paceDisplayUnit,
       selectedDistances: Array.from(selectedDistances),
       emphasizedDistances: Array.from(emphasizedDistances),
       customDistance,
@@ -118,9 +118,9 @@ const PaceCalculator = () => {
     maxPaceValue,
     minPaceInput,
     maxPaceInput,
-    paceUnit,
+    paceBoundsUnit,
     paceDisplay,
-    displayUnit,
+    paceDisplayUnit,
     selectedDistances,
     emphasizedDistances,
     customDistance,
@@ -165,7 +165,7 @@ const PaceCalculator = () => {
       intervalUnit === "mi/h"
         ? parseFloat(intervalValue) * MILE_TO_KM
         : parseFloat(intervalValue);
-    const paceModifier = paceUnit === "min/km" ? 1 : MILE_TO_KM;
+    const paceModifier = paceBoundsUnit === "min/km" ? 1 : MILE_TO_KM;
     const minPaceValueParsed = (60 / parsePace(minPaceValue)) * paceModifier;
     const maxPaceValueParsed = (60 / parsePace(maxPaceValue)) * paceModifier;
 
@@ -210,7 +210,7 @@ const PaceCalculator = () => {
     customDistance,
     minPaceValue,
     maxPaceValue,
-    paceUnit,
+    paceBoundsUnit,
   ]);
 
   return (
@@ -262,13 +262,13 @@ const PaceCalculator = () => {
             />
           </div>
           <div className="flex items-center gap-2">
-            <label htmlFor="paceUnit" className="text-md font-medium">
+            <label htmlFor="paceBoundsUnit" className="text-md font-medium">
               Min/Max Unit:
             </label>
             <select
-              id="paceUnit"
-              value={paceUnit}
-              onChange={(e) => setPaceUnit(e.target.value)}
+              id="paceBoundsUnit"
+              value={paceBoundsUnit}
+              onChange={(e) => setpaceBoundsUnit(e.target.value)}
               className="border rounded px-2 py-1"
             >
               <option value="min/km">min/km</option>
@@ -289,7 +289,7 @@ const PaceCalculator = () => {
                 checked={paceDisplay === "both"}
                 onChange={(e) => setPaceDisplay(e.target.value)}
               />
-              both
+              pace+speed
             </label>
             <label htmlFor="pace" className="flex items-center gap-1">
               <input
@@ -323,18 +323,18 @@ const PaceCalculator = () => {
                 id="paceBoth"
                 type="radio"
                 value="both"
-                checked={displayUnit === "both"}
-                onChange={(e) => setDisplayUnit(e.target.value)}
+                checked={paceDisplayUnit === "both"}
+                onChange={(e) => setpaceDisplayUnit(e.target.value)}
               />
-              km + mi
+              km+mi
             </label>
             <label htmlFor="paceKm" className="flex items-center gap-1">
               <input
                 id="paceKm"
                 type="radio"
                 value="km"
-                checked={displayUnit === "km"}
-                onChange={(e) => setDisplayUnit(e.target.value)}
+                checked={paceDisplayUnit === "km"}
+                onChange={(e) => setpaceDisplayUnit(e.target.value)}
               />
               km
             </label>
@@ -343,8 +343,8 @@ const PaceCalculator = () => {
                 id="paceMi"
                 type="radio"
                 value="mi"
-                checked={displayUnit === "mi"}
-                onChange={(e) => setDisplayUnit(e.target.value)}
+                checked={paceDisplayUnit === "mi"}
+                onChange={(e) => setpaceDisplayUnit(e.target.value)}
               />
               mi
             </label>
@@ -514,7 +514,7 @@ const PaceCalculator = () => {
         <table className="min-w-full border-collapse table-fixed text-xs md:text-sm">
           <thead>
             <tr>
-              {displayUnit !== "mi" && (
+              {paceDisplayUnit !== "mi" && (
                 <>
                   {(paceDisplay == "both" || paceDisplay == "pace") && (
                     <th className="border p-1 py-2 sm:p-2 bg-teal-100 w-[5vw]">
@@ -532,7 +532,7 @@ const PaceCalculator = () => {
                   )}
                 </>
               )}
-              {displayUnit !== "km" && (
+              {paceDisplayUnit !== "km" && (
                 <>
                   {(paceDisplay == "both" || paceDisplay == "pace") && (
                     <th className="border p-1 py-2 sm:p-2 bg-teal-100 w-[5vw]">
@@ -589,7 +589,7 @@ const PaceCalculator = () => {
                   )
                 }
               >
-                {displayUnit !== "mi" && (
+                {paceDisplayUnit !== "mi" && (
                   <>
                     {(paceDisplay == "both" || paceDisplay == "pace") && (
                       <td
@@ -619,7 +619,7 @@ const PaceCalculator = () => {
                     )}
                   </>
                 )}
-                {displayUnit !== "km" && (
+                {paceDisplayUnit !== "km" && (
                   <>
                     {(paceDisplay == "both" || paceDisplay == "pace") && (
                       <td
