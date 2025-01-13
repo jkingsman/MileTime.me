@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 
 import {
   KM_TO_MILES,
@@ -85,6 +85,24 @@ const PaceCalculator = () => {
     () => new Set(loadPreferences().hightlightedSpeeds)
   );
   const [settingsExpanded, toggleSettingsExpanded] = useState(false);
+  const [hasOverflow, setHasOverflow] = useState(false);
+  const tableContainer = useRef(null);
+
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (tableContainer.current) {
+        setHasOverflow(document.body.scrollWidth > document.body.clientWidth);
+      }
+    };
+
+    const resizeObserver = new ResizeObserver(checkOverflow);
+
+    if (tableContainer.current) {
+      resizeObserver.observe(tableContainer.current);
+    }
+
+    return () => resizeObserver.disconnect();
+  }, []);
 
   useEffect(() => {
     const preferences = {
@@ -506,10 +524,19 @@ const PaceCalculator = () => {
           </div>
         </div>
       </details>
+      {hasOverflow && (
+        <div className="text-amber-600 p-2 text-sm">
+          Warning! Tables wider than the screen may not display correctly on
+          mobile devices. Please use a larger screen or landscape orientation for best results.
+        </div>
+      )}
 
-      <div className="table-container">
-        <table className="min-w-full border-collapse table-fixed text-xs md:text-sm overflow-y-auto">
-          <thead className="sticky top-0">
+      <div className="table-container relative">
+        <table
+          ref={tableContainer}
+          className="min-w-full border-collapse table-fixed text-xs md:text-sm overflow-auto"
+        >
+          <thead className="sticky -top-1">
             <tr>
               {paceDisplayUnit !== "mi" && (
                 <>
