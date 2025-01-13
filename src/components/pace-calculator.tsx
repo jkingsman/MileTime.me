@@ -213,7 +213,7 @@ const PaceCalculator = () => {
 
   return (
     <>
-      <div className={"text-4xl p-2 bg-gray-50"}>MileTime.me</div>
+      <div className="text-4xl p-2 bg-gray-50">MileTime.me</div>
       <div className="space-y-4 p-4 bg-gray-50 rounded-lg controls-container">
         {/* Pace Controls */}
         <div className="flex flex-wrap gap-4">
@@ -350,9 +350,9 @@ const PaceCalculator = () => {
         </div>
       </div>
 
-      <details className={"p-2 bg-gray-50"} open={settingsExpanded}>
+      <details className="p-2 bg-gray-50" open={settingsExpanded}>
         <summary
-          className={"text-lg cursor-pointer"}
+          className="text-lg cursor-pointer"
           onClick={(e) => {
             e.preventDefault();
             toggleSettingsExpanded(!settingsExpanded);
@@ -363,7 +363,7 @@ const PaceCalculator = () => {
             ? "Hide configuration"
             : "Show more configuration..."}
         </summary>
-        <div className={"p-2 mt-0 space-y-2"}>
+        <div className="p-2 mt-0 space-y-2">
           {/* Interval Controls */}
           <div className="flex items-center gap-4">
             <label htmlFor="rowInterval" className="text-md font-medium">
@@ -507,14 +507,14 @@ const PaceCalculator = () => {
         </div>
       </details>
 
-      <div className="overflow-x-auto table-container">
-        <table className="min-w-full border-collapse table-fixed text-xs md:text-sm">
-          <thead>
+      <div className="table-container">
+        <table className="min-w-full border-collapse table-fixed text-xs md:text-sm overflow-y-auto">
+          <thead className="sticky top-0">
             <tr>
               {paceDisplayUnit !== "mi" && (
                 <>
                   {(paceDisplay == "both" || paceDisplay == "pace") && (
-                    <th className="border p-1 py-2 sm:p-2 bg-teal-100 w-[5vw]">
+                    <th className="border p-1 py-2 sm:p-2 bg-emerald-100 w-[5vw]">
                       Pace
                       <br />
                       (min/km)
@@ -539,7 +539,7 @@ const PaceCalculator = () => {
                     </th>
                   )}
                   {(paceDisplay == "both" || paceDisplay == "speed") && (
-                    <th className="border p-1 py-2 sm:p-2 bg-sky-100 w-[5vw]">
+                    <th className="border p-1 py-2 sm:p-2 bg-cyan-100 w-[5vw]">
                       Speed
                       <br />
                       (mph)
@@ -552,16 +552,14 @@ const PaceCalculator = () => {
                   selectedDistances.has(dist.id) && (
                     <th
                       key={dist.id}
-                      className={
-                        "border p-1 py-2 sm:p-2 print:text-lg text-sm md:text-lg w-[10vw]"
-                      }
+                      className="border p-1 py-2 bg-white sm:p-2 print:text-lg text-sm md:text-lg w-[10vw]"
                     >
                       <DistanceNameDisplay dist={dist} />
                     </th>
                   )
               )}
               {customDistance.enabled && (
-                <th className="border p-1 py-2 sm:p-2 w-[10vw]">
+                <th className="border p-1 py-2 bg-white sm:p-2 print:text-lg text-sm md:text-lg w-[10vw]">
                   {customDistance.value} {customDistance.unit}
                 </th>
               )}
