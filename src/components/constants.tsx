@@ -76,5 +76,3 @@ export const DEFAULT_PREFERENCES = {
   intervalUnit: "km/h",
   highlightedSpeeds: [],
 };
-
-

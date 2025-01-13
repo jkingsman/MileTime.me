@@ -1,6 +1,14 @@
 import { useMemo, useState, useEffect } from "react";
 
-import { KM_TO_MILES, MILE_TO_KM, STORAGE_KEY, STORAGE_VERSION_KEY, STORAGE_VERSION, STANDARD_DISTANCES, DEFAULT_PREFERENCES } from "./constants";
+import {
+  KM_TO_MILES,
+  MILE_TO_KM,
+  STORAGE_KEY,
+  STORAGE_VERSION_KEY,
+  STORAGE_VERSION,
+  STANDARD_DISTANCES,
+  DEFAULT_PREFERENCES,
+} from "./constants";
 import {
   formatPace,
   parsePace,
@@ -35,10 +43,18 @@ const PaceCalculator = () => {
     return DEFAULT_PREFERENCES;
   };
 
-  const [minPaceValue, setMinPaceValue] = useState(() => loadPreferences().minPaceValue);
-  const [minPaceInput, setMinPaceInput] = useState(() => loadPreferences().minPaceInput);
-  const [maxPaceValue, setMaxPaceValue] = useState(() => loadPreferences().maxPaceValue);
-  const [maxPaceInput, setMaxPaceInput] = useState(() => loadPreferences().maxPaceInput);
+  const [minPaceValue, setMinPaceValue] = useState(
+    () => loadPreferences().minPaceValue
+  );
+  const [minPaceInput, setMinPaceInput] = useState(
+    () => loadPreferences().minPaceInput
+  );
+  const [maxPaceValue, setMaxPaceValue] = useState(
+    () => loadPreferences().maxPaceValue
+  );
+  const [maxPaceInput, setMaxPaceInput] = useState(
+    () => loadPreferences().maxPaceInput
+  );
 
   const [paceUnit, setPaceUnit] = useState(() => loadPreferences().paceUnit);
   const [displayUnit, setDisplayUnit] = useState(
@@ -114,7 +130,11 @@ const PaceCalculator = () => {
     hightlightedSpeeds,
   ]);
 
-  const handleSetToggle = (setKey: string, selectedSet: Set<string>, setter: (value: Set<string>) => void) => {
+  const handleSetToggle = (
+    setKey: string,
+    selectedSet: Set<string>,
+    setter: (value: Set<string>) => void
+  ) => {
     const newSelected = new Set(selectedSet);
     if (newSelected.has(setKey)) {
       newSelected.delete(setKey);
@@ -122,21 +142,29 @@ const PaceCalculator = () => {
       newSelected.add(setKey);
     }
     setter(newSelected);
-  }
+  };
 
-  const handleNumericalValidatableChange = (value: string, validator: (value: string) => number, inputSetter: (value: string) => void, valueSetter: (value: string) => void) => {
+  const handleNumericalValidatableChange = (
+    value: string,
+    validator: (value: string) => number,
+    inputSetter: (value: string) => void,
+    valueSetter: (value: string) => void
+  ) => {
     inputSetter(value);
     const parsed = validator(value);
     if (!isNaN(parsed) && parsed > 0) {
       valueSetter(value);
       inputSetter(value);
     }
-  }
+  };
 
   const paceData = useMemo(() => {
-    const data = []
+    const data = [];
 
-    const interval = intervalUnit === "mi/h" ? parseFloat(intervalValue) * MILE_TO_KM : parseFloat(intervalValue);
+    const interval =
+      intervalUnit === "mi/h"
+        ? parseFloat(intervalValue) * MILE_TO_KM
+        : parseFloat(intervalValue);
     const paceModifier = paceUnit === "min/km" ? 1 : MILE_TO_KM;
     const minPaceValueParsed = (60 / parsePace(minPaceValue)) * paceModifier;
     const maxPaceValueParsed = (60 / parsePace(maxPaceValue)) * paceModifier;
@@ -158,10 +186,10 @@ const PaceCalculator = () => {
 
       const customTime = customDistance.enabled
         ? ((customDistance.unit === "mi"
-          ? customDistance.value * MILE_TO_KM
-          : customDistance.value) /
-          kph) *
-        3600
+            ? customDistance.value * MILE_TO_KM
+            : customDistance.value) /
+            kph) *
+          3600
         : null;
 
       data.push({
@@ -199,9 +227,17 @@ const PaceCalculator = () => {
               id="minPace"
               type="text"
               value={minPaceInput}
-              onChange={(e) => handleNumericalValidatableChange(e.target.value, parsePace, setMinPaceInput, setMinPaceValue)}
-              className={`border rounded px-2 py-1 w-24 w-16 ${minPaceInput === minPaceValue ? "bg-white" : "bg-red-50"
-                }`}
+              onChange={(e) =>
+                handleNumericalValidatableChange(
+                  e.target.value,
+                  parsePace,
+                  setMinPaceInput,
+                  setMinPaceValue
+                )
+              }
+              className={`border rounded px-2 py-1 w-24 w-16 ${
+                minPaceInput === minPaceValue ? "bg-white" : "bg-red-50"
+              }`}
             />
           </div>
           <div className="flex items-center gap-2">
@@ -212,9 +248,17 @@ const PaceCalculator = () => {
               id="maxPace"
               type="text"
               value={maxPaceInput}
-              onChange={(e) => handleNumericalValidatableChange(e.target.value, parsePace, setMaxPaceInput, setMaxPaceValue)}
-              className={`border rounded px-2 py-1 w-24 w-16 ${maxPaceInput === maxPaceValue ? "bg-white" : "bg-red-50"
-                }`}
+              onChange={(e) =>
+                handleNumericalValidatableChange(
+                  e.target.value,
+                  parsePace,
+                  setMaxPaceInput,
+                  setMaxPaceValue
+                )
+              }
+              className={`border rounded px-2 py-1 w-24 w-16 ${
+                maxPaceInput === maxPaceValue ? "bg-white" : "bg-red-50"
+              }`}
             />
           </div>
           <div className="flex items-center gap-2">
@@ -309,8 +353,17 @@ const PaceCalculator = () => {
       </div>
 
       <details className={"p-2 bg-gray-50"} open={settingsExpanded}>
-        <summary className={"text-lg cursor-pointer"} onClick={(e) => { e.preventDefault(); toggleSettingsExpanded(!settingsExpanded); return false; }}>
-          {settingsExpanded ? "Hide configuration" : "Show more configuration..."}
+        <summary
+          className={"text-lg cursor-pointer"}
+          onClick={(e) => {
+            e.preventDefault();
+            toggleSettingsExpanded(!settingsExpanded);
+            return false;
+          }}
+        >
+          {settingsExpanded
+            ? "Hide configuration"
+            : "Show more configuration..."}
         </summary>
         <div className={"p-2 mt-0 space-y-2"}>
           {/* Interval Controls */}
@@ -324,9 +377,17 @@ const PaceCalculator = () => {
               step="0.1"
               min="0"
               value={intervalInput}
-              onChange={(e) => handleNumericalValidatableChange(e.target.value, parseFloat, setIntervalInput, setIntervalValue)}
-              className={`border rounded px-2 py-1 w-24 ${intervalInput === intervalValue ? "bg-white" : "bg-red-50"
-                }`}
+              onChange={(e) =>
+                handleNumericalValidatableChange(
+                  e.target.value,
+                  parseFloat,
+                  setIntervalInput,
+                  setIntervalValue
+                )
+              }
+              className={`border rounded px-2 py-1 w-24 ${
+                intervalInput === intervalValue ? "bg-white" : "bg-red-50"
+              }`}
             />
             <select
               aria-label="Row interval unit"
@@ -349,7 +410,13 @@ const PaceCalculator = () => {
                     aria-label={dist.longName ?? dist.name}
                     type="checkbox"
                     checked={selectedDistances.has(dist.id)}
-                    onChange={() => handleSetToggle(dist.id, selectedDistances, setSelectedDistances)}
+                    onChange={() =>
+                      handleSetToggle(
+                        dist.id,
+                        selectedDistances,
+                        setSelectedDistances
+                      )
+                    }
                   />
                   <DistanceNameDisplay dist={dist} />
                 </label>
@@ -405,18 +472,27 @@ const PaceCalculator = () => {
             </select>
           </div>
 
-
           {/* Distance Emphasis */}
           <div className="space-y-2">
-            <label className="text-md font-medium block">Emphasize Distances:</label>
+            <label className="text-md font-medium block">
+              Emphasize Distances:
+            </label>
             <div className="flex flex-wrap gap-4">
-              {STANDARD_DISTANCES.filter((dist) => selectedDistances.has(dist.id)).map((dist) => (
+              {STANDARD_DISTANCES.filter((dist) =>
+                selectedDistances.has(dist.id)
+              ).map((dist) => (
                 <label key={dist.id} className="flex items-center gap-1">
                   <input
                     aria-label={dist.longName ?? dist.name}
                     type="checkbox"
                     checked={emphasizedDistances.has(dist.id)}
-                    onChange={() => handleSetToggle(dist.id, emphasizedDistances, setEmphasizedDistances)}
+                    onChange={() =>
+                      handleSetToggle(
+                        dist.id,
+                        emphasizedDistances,
+                        setEmphasizedDistances
+                      )
+                    }
                   />
                   <DistanceNameDisplay dist={dist} />
                 </label>
@@ -479,7 +555,9 @@ const PaceCalculator = () => {
                   selectedDistances.has(dist.id) && (
                     <th
                       key={dist.id}
-                      className={"border p-1 py-2 sm:p-2 print:text-lg text-sm md:text-lg w-[10vw]"}
+                      className={
+                        "border p-1 py-2 sm:p-2 print:text-lg text-sm md:text-lg w-[10vw]"
+                      }
                     >
                       <DistanceNameDisplay dist={dist} />
                     </th>
@@ -500,10 +578,16 @@ const PaceCalculator = () => {
                   hightlightedSpeeds.has(row.kph)
                     ? "bg-yellow-100"
                     : index % 2 === 0
-                      ? "bg-white"
-                      : "bg-gray-50"
+                    ? "bg-white"
+                    : "bg-gray-50"
                 }
-                onClick={() => handleSetToggle(row.kph, hightlightedSpeeds, setHightlightedSpeeds)}
+                onClick={() =>
+                  handleSetToggle(
+                    row.kph,
+                    hightlightedSpeeds,
+                    setHightlightedSpeeds
+                  )
+                }
               >
                 {displayUnit !== "mi" && (
                   <>
@@ -513,8 +597,8 @@ const PaceCalculator = () => {
                           hightlightedSpeeds.has(row.kph)
                             ? "border p-1 py-2 sm:p-2 text-center bg-yellow-100"
                             : index % 2 === 0
-                              ? "border p-1 py-2 sm:p-2 text-center bg-teal-50"
-                              : "border p-1 py-2 sm:p-2 text-center bg-teal-100"
+                            ? "border p-1 py-2 sm:p-2 text-center bg-teal-50"
+                            : "border p-1 py-2 sm:p-2 text-center bg-teal-100"
                         }
                       >
                         {row.minPerKm}
@@ -526,8 +610,8 @@ const PaceCalculator = () => {
                           hightlightedSpeeds.has(row.kph)
                             ? "border p-1 py-2 sm:p-2 text-center bg-yellow-100"
                             : index % 2 === 0
-                              ? "border p-1 py-2 sm:p-2 text-center bg-sky-50"
-                              : "border p-1 py-2 sm:p-2 text-center bg-sky-100"
+                            ? "border p-1 py-2 sm:p-2 text-center bg-sky-50"
+                            : "border p-1 py-2 sm:p-2 text-center bg-sky-100"
                         }
                       >
                         {row.kph}
@@ -543,8 +627,8 @@ const PaceCalculator = () => {
                           hightlightedSpeeds.has(row.kph)
                             ? "border p-1 py-2 sm:p-2 text-center bg-yellow-100"
                             : index % 2 === 0
-                              ? "border p-1 py-2 sm:p-2 text-center bg-teal-50"
-                              : "border p-1 py-2 sm:p-2 text-center bg-teal-100"
+                            ? "border p-1 py-2 sm:p-2 text-center bg-teal-50"
+                            : "border p-1 py-2 sm:p-2 text-center bg-teal-100"
                         }
                       >
                         {row.minPerMile}
@@ -556,8 +640,8 @@ const PaceCalculator = () => {
                           hightlightedSpeeds.has(row.kph)
                             ? "border p-1 py-2 sm:p-2 text-center bg-yellow-100"
                             : index % 2 === 0
-                              ? "border p-1 py-2 sm:p-2 text-center bg-sky-50"
-                              : "border p-1 py-2 sm:p-2 text-center bg-sky-100"
+                            ? "border p-1 py-2 sm:p-2 text-center bg-sky-50"
+                            : "border p-1 py-2 sm:p-2 text-center bg-sky-100"
                         }
                       >
                         {row.mph}
@@ -570,15 +654,18 @@ const PaceCalculator = () => {
                     selectedDistances.has(dist.id) && (
                       <td
                         key={dist.id}
-                        className={`border p-1 py-2 sm:p-2 text-center ${emphasizedDistances.has(dist.id) ? "font-bold" : ""
-                          }`}
+                        className={`border p-1 py-2 sm:p-2 text-center ${
+                          emphasizedDistances.has(dist.id) ? "font-bold" : ""
+                        }`}
                       >
                         {row.standardTimes[i]}
                       </td>
                     )
                 )}
                 {customDistance.enabled && (
-                  <td className="border p-1 py-2 sm:p-2 text-center">{row.customTime}</td>
+                  <td className="border p-1 py-2 sm:p-2 text-center">
+                    {row.customTime}
+                  </td>
                 )}
               </tr>
             ))}
