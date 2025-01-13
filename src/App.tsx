@@ -4,7 +4,7 @@ import PaceCalculator from "./components/pace-calculator";
 
 function App() {
   return (
-    <div className="w-full max-w-full space-y-4">
+    <div className="screen:m-2">
       <PaceCalculator />
       {screenFooter}
       {printFooter}
