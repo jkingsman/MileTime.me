@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 
-import {KM_TO_MILES, MILE_TO_KM, STORAGE_KEY, STORAGE_VERSION_KEY, STORAGE_VERSION, STANDARD_DISTANCES, DEFAULT_PREFERENCES, CustomDistance} from "./constants";
+import {KM_TO_MILES, MILE_TO_KM, STORAGE_KEY, STORAGE_VERSION_KEY, STORAGE_VERSION, STANDARD_DISTANCES, DEFAULT_PREFERENCES} from "./constants";
 import {
   formatPace,
   parsePace,
@@ -8,6 +8,8 @@ import {
   resetPage,
   countDecimals,
 } from "./utils";
+import { DistanceNameDisplay } from "./ui_helpers";
+import { CustomDistance } from "./types";
 
 const PaceCalculator = () => {
   // Load preferences from localStorage or use defaults
@@ -326,12 +328,12 @@ const PaceCalculator = () => {
             {STANDARD_DISTANCES.map((dist) => (
               <label key={dist.id} className="flex items-center gap-1">
                 <input
-                  aria-label={dist.name}
+                  aria-label={dist.longName ?? dist.name}
                   type="checkbox"
                   checked={selectedDistances.has(dist.id)}
                   onChange={() => handleDistanceToggle(dist.id)}
                 />
-                {dist.name}
+                <DistanceNameDisplay dist={dist} />
               </label>
             ))}
           </div>
@@ -396,17 +398,17 @@ const PaceCalculator = () => {
       </div>
 
       <div className="overflow-x-auto table-container">
-        <table className="min-w-full border-collapse text-sm">
+        <table className="min-w-full border-collapse table-fixed text-xs md:text-sm">
           <thead>
             <tr>
               {displayUnit !== "mi" && (
                 <>
-                  <th className="border p-2 bg-teal-100">
+                  <th className="border p-2 bg-teal-100 w-[5vw]">
                     Pace
                     <br />
                     (min/km)
                   </th>
-                  <th className="border p-2 bg-sky-100">
+                  <th className="border p-2 bg-sky-100 w-[5vw]">
                     Speed
                     <br />
                     (km/h)
@@ -415,12 +417,12 @@ const PaceCalculator = () => {
               )}
               {displayUnit !== "km" && (
                 <>
-                  <th className="border p-2 bg-teal-100">
+                  <th className="border p-2 bg-teal-100 w-[5vw]">
                     Pace
                     <br />
                     (min/mi)
                   </th>
-                  <th className="border p-2 bg-sky-100">
+                  <th className="border p-2 bg-sky-100 w-[5vw]">
                     Speed
                     <br />
                     (mph)
@@ -432,16 +434,16 @@ const PaceCalculator = () => {
                   selectedDistances.has(dist.id) && (
                     <th
                       key={dist.id}
-                      className={`border p-2 ${
+                      className={`border p-2 w-[10vw] ${
                         dist.important ? "font-bold" : ""
                       }`}
                     >
-                      {dist.name}
+                      <DistanceNameDisplay dist={dist} />
                     </th>
                   )
               )}
               {customDistance.enabled && (
-                <th className="border p-2">
+                <th className="border p-2 w-[10vw]">
                   {customDistance.value} {customDistance.unit}
                 </th>
               )}
@@ -466,7 +468,9 @@ const PaceCalculator = () => {
                       className={
                         hightlightedSpeeds.has(row.kph)
                           ? "border p-2 text-center bg-yellow-100"
-                          : "border p-2 text-center bg-teal-50"
+                          : index % 2 === 0
+                          ? "border p-2 text-center bg-teal-50"
+                          : "border p-2 text-center bg-teal-100"
                       }
                     >
                       {row.minPerKm}
@@ -475,7 +479,9 @@ const PaceCalculator = () => {
                       className={
                         hightlightedSpeeds.has(row.kph)
                           ? "border p-2 text-center bg-yellow-100"
-                          : "border p-2 text-center bg-sky-50"
+                          : index % 2 === 0
+                          ? "border p-2 text-center bg-sky-50"
+                          : "border p-2 text-center bg-sky-100"
                       }
                     >
                       {row.kph}
