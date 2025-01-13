@@ -244,11 +244,9 @@ const PaceCalculator = () => {
         {/* Pace Controls */}
         <div className="flex flex-wrap gap-4">
           <div className="flex items-center gap-2">
-            <label htmlFor="minPace" className="text-md font-medium">
-              Min Pace:
-            </label>
+            <div className="text-md font-medium">Pace Range:</div>
             <input
-              id="minPace"
+              aria-label="minimum pace"
               type="text"
               value={minPaceInput}
               onChange={(e) =>
@@ -259,17 +257,13 @@ const PaceCalculator = () => {
                   setMinPaceValue
                 )
               }
-              className={`border rounded px-2 py-1 w-24 w-16 ${
+              className={`border rounded px-2 py-1 w-16 ${
                 minPaceInput === minPaceValue ? "bg-white" : "bg-red-50"
               }`}
             />
-          </div>
-          <div className="flex items-center gap-2">
-            <label htmlFor="maxPace" className="text-md font-medium">
-              Max Pace:
-            </label>
+            to
             <input
-              id="maxPace"
+              aria-label="maximum pace"
               type="text"
               value={maxPaceInput}
               onChange={(e) =>
@@ -280,16 +274,12 @@ const PaceCalculator = () => {
                   setMaxPaceValue
                 )
               }
-              className={`border rounded px-2 py-1 w-24 w-16 ${
+              className={`border rounded px-2 py-1 w-16 ${
                 maxPaceInput === maxPaceValue ? "bg-white" : "bg-red-50"
               }`}
             />
-          </div>
-          <div className="flex items-center gap-2">
-            <label htmlFor="paceBoundsUnit" className="text-md font-medium">
-              Min/Max Unit:
-            </label>
             <select
+              aria-label="pace bounds units"
               id="paceBoundsUnit"
               value={paceBoundsUnit}
               onChange={(e) => setpaceBoundsUnit(e.target.value)}
