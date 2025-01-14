@@ -59,8 +59,6 @@ const PaceCalculator = () => {
   );
   const [sortAsc, setSortAsc] = useState(() => loadPreferences().sortAsc);
 
-  const [settingsExpanded, toggleSettingsExpanded] = useState(false);
-
   const [hasOverflow, setHasOverflow] = useState(false);
   const tableContainer = useRef(null);
 
@@ -243,17 +241,8 @@ const PaceCalculator = () => {
         </div>
       </div>
 
-      <details className="bg-gray-50 px-2 pb-4 print:hidden" open={settingsExpanded}>
-        <summary
-          className="cursor-pointer text-lg"
-          onClick={(e) => {
-            e.preventDefault();
-            toggleSettingsExpanded(!settingsExpanded);
-            return false;
-          }}
-        >
-          {settingsExpanded ? 'Hide Configuration' : 'Show Configuration'}
-        </summary>
+      <details className="bg-gray-50 px-2 pb-4 print:hidden">
+        <summary className="cursor-pointer text-lg">Customize</summary>
 
         {/* Pace Display Controls */}
         <div className="mt-0 flex items-center gap-4 space-y-2 p-2">
