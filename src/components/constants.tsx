@@ -62,8 +62,8 @@ export const DEFAULT_PREFERENCES = {
   },
 
   // duplicates for validation
-  intervalValue: '0.1',
-  intervalInput: '0.1',
+  intervalValue: '0.2',
+  intervalInput: '0.2',
   minPaceValue: '2:51',
   minPaceInput: '2:51',
   maxPaceValue: '8:34',

@@ -14,9 +14,8 @@ export const screenFooter = (
       target="_blank"
       className="text-blue-600 underline decoration-gray-300 transition-colors duration-200 hover:text-blue-800 hover:decoration-blue-800"
     >
-      Jack Kingsman
+      jack kingsman
     </a>
-    .
     <br />
     this site is free, and ad-free, forever;{' '}
     <a
@@ -32,6 +31,6 @@ export const screenFooter = (
 
 export const printFooter = (
   <div className="footer-print-visible mx-auto max-w-2xl p-4 text-center text-sm text-gray-600">
-    from MileTime.me, made with love and open source by Jack Kingsman
+    from MileTime.me, made with love and open source by jack kingsman
   </div>
 );
