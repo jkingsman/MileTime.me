@@ -507,14 +507,14 @@ const PaceCalculator = () => {
               {paceDisplayUnit !== 'mi' && (
                 <>
                   {(paceDisplay == 'both' || paceDisplay == 'pace') && (
-                    <th className="w-[5vw] border bg-emerald-100 p-1 py-2 font-semibold sm:p-2">
+                    <th className="border bg-emerald-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
                       Pace
                       <br />
                       (min/km)
                     </th>
                   )}
                   {(paceDisplay == 'both' || paceDisplay == 'speed') && (
-                    <th className="w-[5vw] border bg-sky-100 p-1 py-2 font-semibold sm:p-2">
+                    <th className="border bg-sky-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
                       Speed
                       <br />
                       (km/h)
@@ -525,14 +525,14 @@ const PaceCalculator = () => {
               {paceDisplayUnit !== 'km' && (
                 <>
                   {(paceDisplay == 'both' || paceDisplay == 'pace') && (
-                    <th className="w-[5vw] border bg-teal-100 p-1 py-2 font-semibold sm:p-2">
+                    <th className="border bg-teal-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
                       Pace
                       <br />
                       (min/mi)
                     </th>
                   )}
                   {(paceDisplay == 'both' || paceDisplay == 'speed') && (
-                    <th className="w-[5vw] border bg-sky-100 p-1 py-2 font-semibold sm:p-2">
+                    <th className="border bg-sky-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
                       Speed
                       <br />
                       (mph)
