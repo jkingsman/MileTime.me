@@ -424,6 +424,7 @@ const PaceCalculator = () => {
               aria-label="Custom distance value"
               type="number"
               min="0.1"
+              step="0.1"
               value={customDistance.value}
               onChange={(e) =>
                 setCustomDistance((prev: CustomDistance) => ({
@@ -476,6 +477,23 @@ const PaceCalculator = () => {
                   <DistanceNameDisplay dist={dist} />
                 </label>
               ))}
+              {customDistance.enabled && (
+                <label key="customDist" className="flex items-center gap-1">
+                <input
+                  aria-label="custom distance"
+                  type="checkbox"
+                  checked={emphasizedDistances.has("custom")}
+                  onChange={() =>
+                    handleSetToggle(
+                      "custom",
+                      emphasizedDistances,
+                      setEmphasizedDistances
+                    )
+                  }
+                />
+                Custom ({customDistance.value}{customDistance.unit})
+              </label>
+              )}
             </div>
           </div>
         </div>
@@ -616,7 +634,7 @@ const PaceCalculator = () => {
               )}
               {customDistance.enabled && (
                 <th className="border p-1 py-2 bg-white sm:p-2 print:text-lg text-sm md:text-lg w-[10vw]">
-                  {customDistance.value} {customDistance.unit}
+                  {customDistance.value}{customDistance.unit}
                 </th>
               )}
             </tr>
@@ -716,7 +734,9 @@ const PaceCalculator = () => {
                       )
                   )}
                   {customDistance.enabled && (
-                    <td className="border p-1 py-2 sm:p-2 text-center">
+                    <td className={`border p-1 py-2 sm:p-2 text-center ${
+                      emphasizedDistances.has("custom") ? "font-bold" : ""
+                    }`}>
                       {row.customTime}
                     </td>
                   )}

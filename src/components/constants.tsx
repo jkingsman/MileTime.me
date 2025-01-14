@@ -6,7 +6,7 @@ export const MILE_TO_KM = 1 / KM_TO_MILES;
 export const STORAGE_KEY = "paceCalculatorPreferences";
 
 export const STORAGE_VERSION_KEY = "storageVersion";
-export const STORAGE_VERSION = 8;
+export const STORAGE_VERSION = 9;
 
 export const STANDARD_DISTANCES: StandardDistance[] = [
   {
@@ -61,7 +61,7 @@ export const DEFAULT_PREFERENCES = {
   ),
   customDistance: {
     enabled: false,
-    value: 5,
+    value: 4.167,
     unit: "mi",
   },
 
