@@ -382,27 +382,27 @@ const PaceCalculator = () => {
         </div>
 
         {/* Distance Selection */}
-          <div className="gap-4 p-2 mt-0 space-y-2">
-            <label className="text-md font-medium block">Show Distances:</label>
-            <div className="flex flex-wrap gap-4">
-              {STANDARD_DISTANCES.map((dist) => (
-                <label key={dist.id} className="flex items-center gap-1">
-                  <input
-                    aria-label={dist.longName ?? dist.name}
-                    type="checkbox"
-                    checked={selectedDistances.has(dist.id)}
-                    onChange={() =>
-                      handleSetToggle(
-                        dist.id,
-                        selectedDistances,
-                        setSelectedDistances
-                      )
-                    }
-                  />
-                  <DistanceNameDisplay dist={dist} />
-                </label>
-              ))}
-            </div>
+        <div className="gap-4 p-2 mt-0 space-y-2">
+          <label className="text-md font-medium block">Show Distances:</label>
+          <div className="flex flex-wrap gap-4">
+            {STANDARD_DISTANCES.map((dist) => (
+              <label key={dist.id} className="flex items-center gap-1">
+                <input
+                  aria-label={dist.longName ?? dist.name}
+                  type="checkbox"
+                  checked={selectedDistances.has(dist.id)}
+                  onChange={() =>
+                    handleSetToggle(
+                      dist.id,
+                      selectedDistances,
+                      setSelectedDistances
+                    )
+                  }
+                />
+                <DistanceNameDisplay dist={dist} />
+              </label>
+            ))}
+          </div>
 
           {/* Custom Distance */}
           <div className="flex items-center gap-4">
@@ -479,20 +479,21 @@ const PaceCalculator = () => {
               ))}
               {customDistance.enabled && (
                 <label key="customDist" className="flex items-center gap-1">
-                <input
-                  aria-label="custom distance"
-                  type="checkbox"
-                  checked={emphasizedDistances.has("custom")}
-                  onChange={() =>
-                    handleSetToggle(
-                      "custom",
-                      emphasizedDistances,
-                      setEmphasizedDistances
-                    )
-                  }
-                />
-                Custom ({customDistance.value}{customDistance.unit})
-              </label>
+                  <input
+                    aria-label="custom distance"
+                    type="checkbox"
+                    checked={emphasizedDistances.has("custom")}
+                    onChange={() =>
+                      handleSetToggle(
+                        "custom",
+                        emphasizedDistances,
+                        setEmphasizedDistances
+                      )
+                    }
+                  />
+                  Custom ({customDistance.value}
+                  {customDistance.unit})
+                </label>
               )}
             </div>
           </div>
@@ -573,8 +574,8 @@ const PaceCalculator = () => {
       {hasOverflow && (
         <div className="text-amber-600 p-2 text-sm">
           Warning! Tables wider than the screen may not display correctly on
-          mobile devices. Please use a larger screen or landscape orientation
-          for best results.
+          small screens. Please use a larger screen or landscape orientation for
+          best results.
         </div>
       )}
 
@@ -634,7 +635,8 @@ const PaceCalculator = () => {
               )}
               {customDistance.enabled && (
                 <th className="border p-1 py-2 bg-white sm:p-2 print:text-lg text-sm md:text-lg w-[10vw]">
-                  {customDistance.value}{customDistance.unit}
+                  {customDistance.value}
+                  {customDistance.unit}
                 </th>
               )}
             </tr>
@@ -734,9 +736,11 @@ const PaceCalculator = () => {
                       )
                   )}
                   {customDistance.enabled && (
-                    <td className={`border p-1 py-2 sm:p-2 text-center ${
-                      emphasizedDistances.has("custom") ? "font-bold" : ""
-                    }`}>
+                    <td
+                      className={`border p-1 py-2 sm:p-2 text-center ${
+                        emphasizedDistances.has("custom") ? "font-bold" : ""
+                      }`}
+                    >
                       {row.customTime}
                     </td>
                   )}
