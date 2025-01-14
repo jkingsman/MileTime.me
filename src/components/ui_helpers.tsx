@@ -1,4 +1,4 @@
-import { StandardDistance } from "./types";
+import { StandardDistance } from './types';
 
 export const DistanceNameDisplay = ({ dist }: { dist: StandardDistance }) => {
   return (
