@@ -56,7 +56,9 @@ const PaceCalculator = () => {
     () => loadPreferences().maxPaceInput
   );
 
-  const [paceBoundsUnit, setpaceBoundsUnit] = useState(() => loadPreferences().paceBoundsUnit);
+  const [paceBoundsUnit, setpaceBoundsUnit] = useState(
+    () => loadPreferences().paceBoundsUnit
+  );
   const [paceDisplayUnit, setpaceDisplayUnit] = useState(
     () => loadPreferences().paceDisplayUnit
   );
@@ -84,12 +86,9 @@ const PaceCalculator = () => {
   const [hightlightedSpeeds, setHightlightedSpeeds] = useState<Set<string>>(
     () => new Set(loadPreferences().hightlightedSpeeds)
   );
-    const [sortAsc, setSortAsc] = useState(() => loadPreferences().sortAsc);
+  const [sortAsc, setSortAsc] = useState(() => loadPreferences().sortAsc);
 
-  const [paceSettingsExpanded, togglePaceSettingsExpanded] = useState(false);
-  const [distanceSettingsExpanded, toggleDistanceSettingsExpanded] =
-    useState(false);
-  const [tableSettingsExpanded, toggleTableSettingsExpanded] = useState(false);
+  const [settingsExpanded, toggleSettingsExpanded] = useState(false);
 
   const [hasOverflow, setHasOverflow] = useState(false);
   const tableContainer = useRef(null);
@@ -210,7 +209,8 @@ const PaceCalculator = () => {
         (dist) => (dist.distance / kph) * 3600
       );
 
-      const customTime = ((customDistance.unit === "mi"
+      const customTime =
+        ((customDistance.unit === "mi"
           ? customDistance.value * MILE_TO_KM
           : customDistance.value) /
           kph) *
@@ -240,7 +240,7 @@ const PaceCalculator = () => {
   return (
     <>
       <div className="text-4xl p-2 bg-gray-50 print:hidden">MileTime.me</div>
-      <div className="space-y-4 p-4 bg-gray-50 rounded-lg print:hidden">
+      <div className="space-y-4 p-2 bg-gray-50 rounded-lg print:hidden">
         {/* Pace Controls */}
         <div className="flex flex-wrap gap-4">
           <div className="flex items-center gap-2">
@@ -293,24 +293,24 @@ const PaceCalculator = () => {
       </div>
 
       <details
-        className="px-2 bg-gray-50 print:hidden"
-        open={paceSettingsExpanded}
+        className="px-2 pb-4 bg-gray-50 print:hidden"
+        open={settingsExpanded}
       >
         <summary
           className="text-lg cursor-pointer"
           onClick={(e) => {
             e.preventDefault();
-            togglePaceSettingsExpanded(!paceSettingsExpanded);
+            toggleSettingsExpanded(!settingsExpanded);
             return false;
           }}
         >
-          Pace Config
+          {settingsExpanded ? "Hide Configuration" : "Show Configuration"}
         </summary>
 
         {/* Pace Display Controls */}
         <div className="flex items-center gap-4 p-2 mt-0 space-y-2">
           <label className="text-md font-medium">Pace/Speed:</label>
-          <div className="flex gap-4 flex-wrap">
+          <div className="flex gap-4 items-center flex-wrap">
             <label htmlFor="paceAndSpeed" className="flex items-center gap-1">
               <input
                 id="paceAndSpeed"
@@ -380,25 +380,9 @@ const PaceCalculator = () => {
             </label>
           </div>
         </div>
-      </details>
 
-      <details
-        className="px-2 bg-gray-50 print:hidden"
-        open={distanceSettingsExpanded}
-      >
-        <summary
-          className="text-lg cursor-pointer"
-          onClick={(e) => {
-            e.preventDefault();
-            toggleDistanceSettingsExpanded(!distanceSettingsExpanded);
-            return false;
-          }}
-        >
-          Distance Config
-        </summary>
-        <div className="p-2 mt-0 space-y-2">
-          {/* Distance Selection */}
-          <div className="space-y-2">
+        {/* Distance Selection */}
+          <div className="gap-4 p-2 mt-0 space-y-2">
             <label className="text-md font-medium block">Show Distances:</label>
             <div className="flex flex-wrap gap-4">
               {STANDARD_DISTANCES.map((dist) => (
@@ -419,7 +403,6 @@ const PaceCalculator = () => {
                 </label>
               ))}
             </div>
-          </div>
 
           {/* Custom Distance */}
           <div className="flex items-center gap-4">
@@ -496,24 +479,9 @@ const PaceCalculator = () => {
             </div>
           </div>
         </div>
-      </details>
 
-      <details
-        className="px-2 bg-gray-50 print:hidden"
-        open={tableSettingsExpanded}
-      >
-        <summary
-          className="text-lg cursor-pointer"
-          onClick={(e) => {
-            e.preventDefault();
-            toggleTableSettingsExpanded(!tableSettingsExpanded);
-            return false;
-          }}
-        >
-          Table Config
-        </summary>
+        {/* Interval Controls */}
         <div className="p-2 mt-0 space-y-2">
-          {/* Interval Controls */}
           <div className="flex items-center gap-4">
             <label htmlFor="rowInterval" className="text-md font-medium">
               Row Interval:
@@ -574,15 +542,16 @@ const PaceCalculator = () => {
             </div>
           </div>
         </div>
+        <div className="p-2 bg-gray-50 flex gap-2 pt-2 print:hidden">
+          <button
+            onClick={resetPage}
+            className="text-xs font-medium bg-transparent hover:bg-yellow-500 text-yellow-700 font-semibold hover:text-white py-2 px-4 border border-yellow-500 hover:border-transparent rounded"
+          >
+            Reset Page
+          </button>
+        </div>
       </details>
-      <div className="p-2 bg-gray-50 flex gap-2 pt-2 print:hidden">
-        <button
-          onClick={resetPage}
-          className="text-xs font-medium bg-transparent hover:bg-yellow-500 text-yellow-700 font-semibold hover:text-white py-2 px-4 border border-yellow-500 hover:border-transparent rounded"
-        >
-          Reset Page
-        </button>
-      </div>
+
       {hasOverflow && (
         <div className="text-amber-600 p-2 text-sm">
           Warning! Tables wider than the screen may not display correctly on
