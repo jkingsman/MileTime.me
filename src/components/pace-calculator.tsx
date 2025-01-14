@@ -257,9 +257,8 @@ const PaceCalculator = () => {
                   setMinPaceValue
                 )
               }
-              className={`border rounded px-2 py-1 w-16 ${
-                minPaceInput === minPaceValue ? "bg-white" : "bg-red-50"
-              }`}
+              className={`border rounded px-2 py-1 w-16 ${minPaceInput === minPaceValue ? "bg-white" : "bg-red-50"
+                }`}
             />
             to
             <input
@@ -274,9 +273,8 @@ const PaceCalculator = () => {
                   setMaxPaceValue
                 )
               }
-              className={`border rounded px-2 py-1 w-16 ${
-                maxPaceInput === maxPaceValue ? "bg-white" : "bg-red-50"
-              }`}
+              className={`border rounded px-2 py-1 w-16 ${maxPaceInput === maxPaceValue ? "bg-white" : "bg-red-50"
+                }`}
             />
             <select
               aria-label="pace bounds units"
@@ -519,9 +517,8 @@ const PaceCalculator = () => {
                   setIntervalValue
                 )
               }
-              className={`border rounded px-2 py-1 w-24 ${
-                intervalInput === intervalValue ? "bg-white" : "bg-red-50"
-              }`}
+              className={`border rounded px-2 py-1 w-24 ${intervalInput === intervalValue ? "bg-white" : "bg-red-50"
+                }`}
             />
             <select
               aria-label="Row interval unit"
@@ -589,14 +586,14 @@ const PaceCalculator = () => {
               {paceDisplayUnit !== "mi" && (
                 <>
                   {(paceDisplay == "both" || paceDisplay == "pace") && (
-                    <th className="border p-1 py-2 sm:p-2 bg-emerald-100 w-[5vw]">
+                    <th className="border p-1 py-2 sm:p-2 bg-emerald-100 w-[5vw] font-semibold	">
                       Pace
                       <br />
                       (min/km)
                     </th>
                   )}
                   {(paceDisplay == "both" || paceDisplay == "speed") && (
-                    <th className="border p-1 py-2 sm:p-2 bg-sky-100 w-[5vw]">
+                    <th className="border p-1 py-2 sm:p-2 bg-sky-100 w-[5vw] font-semibold	">
                       Speed
                       <br />
                       (km/h)
@@ -607,14 +604,14 @@ const PaceCalculator = () => {
               {paceDisplayUnit !== "km" && (
                 <>
                   {(paceDisplay == "both" || paceDisplay == "pace") && (
-                    <th className="border p-1 py-2 sm:p-2 bg-teal-100 w-[5vw]">
+                    <th className="border p-1 py-2 sm:p-2 bg-teal-100 w-[5vw] font-semibold	">
                       Pace
                       <br />
                       (min/mi)
                     </th>
                   )}
                   {(paceDisplay == "both" || paceDisplay == "speed") && (
-                    <th className="border p-1 py-2 sm:p-2 bg-cyan-100 w-[5vw]">
+                    <th className="border p-1 py-2 sm:p-2 bg-sky-100 w-[5vw] font-semibold	">
                       Speed
                       <br />
                       (mph)
@@ -627,14 +624,14 @@ const PaceCalculator = () => {
                   selectedDistances.has(dist.id) && (
                     <th
                       key={dist.id}
-                      className="border p-1 py-2 bg-white sm:p-2 print:text-lg text-sm md:text-lg w-[10vw]"
+                      className={`border p-1 py-2 bg-white sm:p-2 print:text-lg text-sm md:text-lgw-[10vw] ${emphasizedDistances.has(dist.id) ? 'font-extrabold' : 'font-semibold	'}`}
                     >
                       <DistanceNameDisplay dist={dist} />
                     </th>
                   )
               )}
               {customDistance.enabled && (
-                <th className="border p-1 py-2 bg-white sm:p-2 print:text-lg text-sm md:text-lg w-[10vw]">
+                <th className={`border p-1 py-2 bg-white sm:p-2 print:text-lg text-sm md:text-lgw-[10vw] ${emphasizedDistances.has('custom') ? 'font-extrabold' : 'font-semibold	'}`}>
                   {customDistance.value}
                   {customDistance.unit}
                 </th>
@@ -651,8 +648,8 @@ const PaceCalculator = () => {
                     hightlightedSpeeds.has(row.kph)
                       ? "bg-yellow-100"
                       : index % 2 === 0
-                      ? "bg-white"
-                      : "bg-gray-50"
+                        ? "bg-white"
+                        : "bg-gray-50"
                   }
                   onClick={() =>
                     handleSetToggle(
@@ -666,26 +663,16 @@ const PaceCalculator = () => {
                     <>
                       {(paceDisplay == "both" || paceDisplay == "pace") && (
                         <td
-                          className={
-                            hightlightedSpeeds.has(row.kph)
-                              ? "border p-1 py-2 sm:p-2 text-center bg-yellow-100"
-                              : index % 2 === 0
-                              ? "border p-1 py-2 sm:p-2 text-center bg-teal-50"
-                              : "border p-1 py-2 sm:p-2 text-center bg-teal-100"
-                          }
+                          className={`"border p-1 py-2 sm:p-2 text-center ${hightlightedSpeeds.has(row.kph) ? 'bg-yellow-100' : index % 2 === 0
+                            ? 'bg-teal-50' : 'bg-teal-100'}`}
                         >
                           {row.minPerKm}
                         </td>
                       )}
                       {(paceDisplay == "both" || paceDisplay == "speed") && (
                         <td
-                          className={
-                            hightlightedSpeeds.has(row.kph)
-                              ? "border p-1 py-2 sm:p-2 text-center bg-yellow-100"
-                              : index % 2 === 0
-                              ? "border p-1 py-2 sm:p-2 text-center bg-sky-50"
-                              : "border p-1 py-2 sm:p-2 text-center bg-sky-100"
-                          }
+                          className={`"border p-1 py-2 sm:p-2 text-center ${hightlightedSpeeds.has(row.kph) ? 'bg-yellow-100' : index % 2 === 0
+                            ? 'bg-sky-50' : 'bg-sky-100'}`}
                         >
                           {row.kph}
                         </td>
@@ -696,26 +683,16 @@ const PaceCalculator = () => {
                     <>
                       {(paceDisplay == "both" || paceDisplay == "pace") && (
                         <td
-                          className={
-                            hightlightedSpeeds.has(row.kph)
-                              ? "border p-1 py-2 sm:p-2 text-center bg-yellow-100"
-                              : index % 2 === 0
-                              ? "border p-1 py-2 sm:p-2 text-center bg-teal-50"
-                              : "border p-1 py-2 sm:p-2 text-center bg-teal-100"
-                          }
+                          className={`"border p-1 py-2 sm:p-2 text-center ${hightlightedSpeeds.has(row.kph) ? 'bg-yellow-100' : index % 2 === 0
+                            ? 'bg-teal-50' : 'bg-teal-100'}`}
                         >
                           {row.minPerMile}
                         </td>
                       )}
                       {(paceDisplay == "both" || paceDisplay == "speed") && (
                         <td
-                          className={
-                            hightlightedSpeeds.has(row.kph)
-                              ? "border p-1 py-2 sm:p-2 text-center bg-yellow-100"
-                              : index % 2 === 0
-                              ? "border p-1 py-2 sm:p-2 text-center bg-sky-50"
-                              : "border p-1 py-2 sm:p-2 text-center bg-sky-100"
-                          }
+                          className={`"border p-1 py-2 sm:p-2 text-center ${hightlightedSpeeds.has(row.kph) ? 'bg-yellow-100' : index % 2 === 0
+                            ? 'bg-sky-50' : 'bg-sky-100'}`}
                         >
                           {row.mph}
                         </td>
@@ -727,9 +704,8 @@ const PaceCalculator = () => {
                       selectedDistances.has(dist.id) && (
                         <td
                           key={dist.id}
-                          className={`border p-1 py-2 sm:p-2 text-center ${
-                            emphasizedDistances.has(dist.id) ? "font-bold" : ""
-                          }`}
+                          className={`border p-1 py-2 sm:p-2 text-center ${emphasizedDistances.has(dist.id) ? "font-bold" : ""
+                            }`}
                         >
                           {row.standardTimes[i]}
                         </td>
@@ -737,9 +713,8 @@ const PaceCalculator = () => {
                   )}
                   {customDistance.enabled && (
                     <td
-                      className={`border p-1 py-2 sm:p-2 text-center ${
-                        emphasizedDistances.has("custom") ? "font-bold" : ""
-                      }`}
+                      className={`border p-1 py-2 sm:p-2 text-center ${emphasizedDistances.has("custom") ? "font-bold" : ""
+                        }`}
                     >
                       {row.customTime}
                     </td>
