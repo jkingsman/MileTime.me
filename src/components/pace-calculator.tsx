@@ -249,16 +249,6 @@ const PaceCalculator = () => {
         <div className="mt-0 flex items-center gap-4 space-y-2 p-2">
           <label className="text-md font-medium">Pace/Speed:</label>
           <div className="flex flex-wrap items-center gap-4">
-            <label htmlFor="paceAndSpeed" className="flex items-center gap-1">
-              <input
-                id="paceAndSpeed"
-                type="radio"
-                value="both"
-                checked={paceDisplay === 'both'}
-                onChange={(e) => setPaceDisplay(e.target.value)}
-              />
-              pace+speed
-            </label>
             <label htmlFor="pace" className="flex items-center gap-1">
               <input
                 id="pace"
@@ -279,6 +269,16 @@ const PaceCalculator = () => {
               />
               speed
             </label>
+            <label htmlFor="paceAndSpeed" className="flex items-center gap-1">
+              <input
+                id="paceAndSpeed"
+                type="radio"
+                value="both"
+                checked={paceDisplay === 'both'}
+                onChange={(e) => setPaceDisplay(e.target.value)}
+              />
+              both
+            </label>
           </div>
         </div>
 
@@ -286,16 +286,6 @@ const PaceCalculator = () => {
         <div className="mt-0 flex items-center gap-4 p-2">
           <label className="text-md font-medium">Pace Units:</label>
           <div className="flex flex-wrap gap-4">
-            <label htmlFor="paceBoth" className="flex items-center gap-1">
-              <input
-                id="paceBoth"
-                type="radio"
-                value="both"
-                checked={paceDisplayUnit === 'both'}
-                onChange={(e) => setpaceDisplayUnit(e.target.value)}
-              />
-              km+mi
-            </label>
             <label htmlFor="paceKm" className="flex items-center gap-1">
               <input
                 id="paceKm"
@@ -316,13 +306,23 @@ const PaceCalculator = () => {
               />
               mi
             </label>
+            <label htmlFor="paceBoth" className="flex items-center gap-1">
+              <input
+                id="paceBoth"
+                type="radio"
+                value="both"
+                checked={paceDisplayUnit === 'both'}
+                onChange={(e) => setpaceDisplayUnit(e.target.value)}
+              />
+              km+mi
+            </label>
           </div>
         </div>
 
         {/* Distance Selection */}
         <div className="mt-0 gap-4 space-y-2 p-2">
           <label className="text-md block font-medium">Show Distances:</label>
-          <div className="flex flex-wrap gap-4">
+          <div className="ml-4 flex flex-wrap gap-4">
             {STANDARD_DISTANCES.map((dist) => (
               <label key={dist.id} className="flex items-center gap-1">
                 <input
@@ -337,7 +337,7 @@ const PaceCalculator = () => {
           </div>
 
           {/* Custom Distance */}
-          <div className="flex items-center gap-4">
+          <div className="ml-4 flex items-center gap-4">
             <label className="flex items-center gap-2">
               <input
                 aria-label="Custom distance enable"
@@ -387,7 +387,7 @@ const PaceCalculator = () => {
           {/* Distance Emphasis */}
           <div className="space-y-2">
             <label className="text-md block font-medium">Emphasize Distances:</label>
-            <div className="flex flex-wrap gap-4">
+            <div className="ml-4 flex flex-wrap gap-4">
               {STANDARD_DISTANCES.filter((dist) => selectedDistances.has(dist.id)).map((dist) => (
                 <label key={dist.id} className="flex items-center gap-1">
                   <input
