@@ -60,12 +60,13 @@ const PaceCalculator = () => {
   const [sortAsc, setSortAsc] = useState(() => loadPreferences().sortAsc);
 
   const [hasOverflow, setHasOverflow] = useState(false);
-  const tableContainer = useRef(null);
+  const tableContainer = useRef<HTMLTableElement>(null);
 
   useEffect(() => {
     const checkOverflow = () => {
       if (tableContainer.current) {
-        setHasOverflow(document.body.scrollWidth > document.body.clientWidth);
+        const rect = tableContainer.current.getBoundingClientRect();
+        setHasOverflow(rect.width > document.body.clientWidth + 50);
       }
     };
 
@@ -448,8 +449,8 @@ const PaceCalculator = () => {
               onChange={(e) => setIntervalUnit(e.target.value)}
               className="rounded border px-2 py-1"
             >
-              <option value="km/h">km/h</option>
-              <option value="mi/h">mi/h</option>
+              <option value="km/h">kph</option>
+              <option value="mi/h">mph</option>
             </select>
           </div>
 
@@ -491,13 +492,12 @@ const PaceCalculator = () => {
       </details>
 
       {hasOverflow && (
-        <div className="p-2 text-sm text-amber-600">
-          Warning! Tables wider than the screen may not display correctly on small screens. Please
-          use a larger screen or landscape orientation for best results.
+        <div className="p-2 text-right text-sm text-amber-600">
+          Scroll, reduce columns, or go landscape &gt;&gt;&gt;
         </div>
       )}
 
-      <div className="table-container relative">
+      <div className={`table-container relative ${hasOverflow && 'overflow-x-scroll'}`}>
         <table
           ref={tableContainer}
           className="min-w-full table-fixed border-collapse overflow-auto text-xs md:text-sm"
@@ -510,14 +510,14 @@ const PaceCalculator = () => {
                     <th className="border bg-emerald-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
                       Pace
                       <br />
-                      (min/km)
+                      [min/km]
                     </th>
                   )}
                   {(paceDisplay == 'both' || paceDisplay == 'speed') && (
                     <th className="border bg-sky-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
                       Speed
                       <br />
-                      (km/h)
+                      [kph]
                     </th>
                   )}
                 </>
@@ -528,14 +528,14 @@ const PaceCalculator = () => {
                     <th className="border bg-teal-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
                       Pace
                       <br />
-                      (min/mi)
+                      [min/mi]
                     </th>
                   )}
                   {(paceDisplay == 'both' || paceDisplay == 'speed') && (
                     <th className="border bg-sky-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
                       Speed
                       <br />
-                      (mph)
+                      [mph]
                     </th>
                   )}
                 </>
