@@ -60,13 +60,16 @@ const PaceCalculator = () => {
   const [sortAsc, setSortAsc] = useState(() => loadPreferences().sortAsc);
 
   const [hasOverflow, setHasOverflow] = useState(false);
+  const [displayOverflowMessage, setDisplayOverflowMessage] = useState(false);
+
   const tableContainer = useRef<HTMLTableElement>(null);
 
   useEffect(() => {
     const checkOverflow = () => {
       if (tableContainer.current) {
         const rect = tableContainer.current.getBoundingClientRect();
-        setHasOverflow(rect.width > document.body.clientWidth + 50);
+        setHasOverflow(rect.width > document.body.clientWidth);
+        setDisplayOverflowMessage(rect.width > document.body.clientWidth + 50);
       }
     };
 
@@ -491,7 +494,7 @@ const PaceCalculator = () => {
         </div>
       </details>
 
-      {hasOverflow && (
+      {displayOverflowMessage && (
         <div className="p-2 text-right text-sm text-amber-600">
           Scroll, reduce columns, or go landscape &gt;&gt;&gt;
         </div>
