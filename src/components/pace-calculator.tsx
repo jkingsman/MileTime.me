@@ -192,8 +192,8 @@ const PaceCalculator = () => {
 
   return (
     <>
-      <div className="bg-gray-50 p-2 text-4xl print:hidden">MileTime.me</div>
-      <div className="space-y-4 rounded-lg bg-gray-50 p-2 print:hidden">
+      <div className="bg-gray-50 p-2 px-4 text-4xl print:hidden">MileTime.me</div>
+      <div className="space-y-4 rounded-lg bg-gray-50 p-2 px-4 print:hidden">
         {/* Pace Controls */}
         <div className="flex flex-wrap gap-4">
           <div className="flex items-center gap-2">
@@ -245,13 +245,15 @@ const PaceCalculator = () => {
         </div>
       </div>
 
-      <details className="bg-gray-50 px-2 pb-4 print:hidden">
-        <summary className="cursor-pointer text-lg">Customize</summary>
+      <details className="bg-gray-50 px-4 pb-2 print:hidden">
+        <summary className="mb-2 cursor-pointer text-lg font-medium">Customize</summary>
+
+        <div className="text-md flex items-center font-medium">Pace/Speed:</div>
 
         {/* Pace Display Controls */}
-        <div className="mt-0 flex items-center gap-4 space-y-2 p-2">
-          <label className="text-md font-medium">Pace/Speed:</label>
-          <div className="flex flex-wrap items-center gap-4">
+        <div className="ml-4 flex items-center gap-6">
+          <label className="text-sm font-medium">Show:</label>
+          <div className="flex items-center gap-4">
             <label htmlFor="pace" className="flex items-center gap-1">
               <input
                 id="pace"
@@ -286,46 +288,48 @@ const PaceCalculator = () => {
         </div>
 
         {/* Pace Unit Controls */}
-        <div className="mt-0 flex items-center gap-4 p-2">
-          <label className="text-md font-medium">Pace Units:</label>
-          <div className="flex flex-wrap gap-4">
-            <label htmlFor="paceKm" className="flex items-center gap-1">
-              <input
-                id="paceKm"
-                type="radio"
-                value="km"
-                checked={paceDisplayUnit === 'km'}
-                onChange={(e) => setpaceDisplayUnit(e.target.value)}
-              />
-              km
-            </label>
-            <label htmlFor="paceMi" className="flex items-center gap-1">
-              <input
-                id="paceMi"
-                type="radio"
-                value="mi"
-                checked={paceDisplayUnit === 'mi'}
-                onChange={(e) => setpaceDisplayUnit(e.target.value)}
-              />
-              mi
-            </label>
-            <label htmlFor="paceBoth" className="flex items-center gap-1">
-              <input
-                id="paceBoth"
-                type="radio"
-                value="both"
-                checked={paceDisplayUnit === 'both'}
-                onChange={(e) => setpaceDisplayUnit(e.target.value)}
-              />
-              km+mi
-            </label>
+        <div className="space-y-2">
+          <div className="ml-4 flex items-center gap-6">
+            <label className="text-sm font-medium">Units:</label>
+            <div className="flex items-center gap-4">
+              <label htmlFor="paceKm" className="flex items-center gap-1">
+                <input
+                  id="paceKm"
+                  type="radio"
+                  value="km"
+                  checked={paceDisplayUnit === 'km'}
+                  onChange={(e) => setpaceDisplayUnit(e.target.value)}
+                />
+                km
+              </label>
+              <label htmlFor="paceMi" className="flex items-center gap-1">
+                <input
+                  id="paceMi"
+                  type="radio"
+                  value="mi"
+                  checked={paceDisplayUnit === 'mi'}
+                  onChange={(e) => setpaceDisplayUnit(e.target.value)}
+                />
+                mi
+              </label>
+              <label htmlFor="paceBoth" className="flex items-center gap-1">
+                <input
+                  id="paceBoth"
+                  type="radio"
+                  value="both"
+                  checked={paceDisplayUnit === 'both'}
+                  onChange={(e) => setpaceDisplayUnit(e.target.value)}
+                />
+                km+mi
+              </label>
+            </div>
           </div>
         </div>
 
         {/* Distance Selection */}
-        <div className="mt-0 gap-4 space-y-2 p-2">
-          <label className="text-md block font-medium">Show Distances:</label>
-          <div className="ml-4 flex flex-wrap gap-4">
+        <div className="mt-1 space-y-0">
+          <div className="text-md flex items-center font-medium">Show Distances:</div>
+          <div className="ml-4 flex flex-wrap gap-x-4">
             {STANDARD_DISTANCES.map((dist) => (
               <label key={dist.id} className="flex items-center gap-1">
                 <input
@@ -338,8 +342,10 @@ const PaceCalculator = () => {
               </label>
             ))}
           </div>
+        </div>
 
-          {/* Custom Distance */}
+        {/* Custom Distance */}
+        <div className="space-y-2">
           <div className="ml-4 flex items-center gap-4">
             <label className="flex items-center gap-2">
               <input
@@ -386,105 +392,103 @@ const PaceCalculator = () => {
               <option value="mi">mi</option>
             </select>
           </div>
+        </div>
 
-          {/* Distance Emphasis */}
-          <div className="space-y-2">
-            <label className="text-md block font-medium">Emphasize Distances:</label>
-            <div className="ml-4 flex flex-wrap gap-4">
-              {STANDARD_DISTANCES.filter((dist) => selectedDistances.has(dist.id)).map((dist) => (
-                <label key={dist.id} className="flex items-center gap-1">
-                  <input
-                    aria-label={dist.longName ?? dist.name}
-                    type="checkbox"
-                    checked={emphasizedDistances.has(dist.id)}
-                    onChange={() =>
-                      handleSetToggle(dist.id, emphasizedDistances, setEmphasizedDistances)
-                    }
-                  />
-                  <DistanceNameDisplay dist={dist} />
-                </label>
-              ))}
-              {customDistance.enabled && (
-                <label key="customDist" className="flex items-center gap-1">
-                  <input
-                    aria-label="custom distance"
-                    type="checkbox"
-                    checked={emphasizedDistances.has('custom')}
-                    onChange={() =>
-                      handleSetToggle('custom', emphasizedDistances, setEmphasizedDistances)
-                    }
-                  />
-                  Custom ({customDistance.value}
-                  {customDistance.unit})
-                </label>
-              )}
-            </div>
+        {/* Distance Emphasis */}
+        <div className="space-y-2">
+          <div className="text-md flex items-center font-medium">Emphasize Distances:</div>
+          <div className="ml-4 flex flex-wrap gap-4">
+            {STANDARD_DISTANCES.filter((dist) => selectedDistances.has(dist.id)).map((dist) => (
+              <label key={dist.id} className="flex items-center gap-1">
+                <input
+                  aria-label={dist.longName ?? dist.name}
+                  type="checkbox"
+                  checked={emphasizedDistances.has(dist.id)}
+                  onChange={() =>
+                    handleSetToggle(dist.id, emphasizedDistances, setEmphasizedDistances)
+                  }
+                />
+                <DistanceNameDisplay dist={dist} />
+              </label>
+            ))}
+            {customDistance.enabled && (
+              <label key="customDist" className="flex items-center gap-1">
+                <input
+                  aria-label="custom distance"
+                  type="checkbox"
+                  checked={emphasizedDistances.has('custom')}
+                  onChange={() =>
+                    handleSetToggle('custom', emphasizedDistances, setEmphasizedDistances)
+                  }
+                />
+                Custom ({customDistance.value}
+                {customDistance.unit})
+              </label>
+            )}
           </div>
         </div>
 
         {/* Interval Controls */}
-        <div className="mt-0 space-y-2 p-2">
-          <div className="flex items-center gap-4">
-            <label htmlFor="rowInterval" className="text-md font-medium">
-              Row Interval:
-            </label>
-            <input
-              id="rowInterval"
-              type="number"
-              step="0.1"
-              min="0"
-              value={intervalInput}
-              onChange={(e) =>
-                handleNumericalValidatableChange(
-                  e.target.value,
-                  parseFloat,
-                  setIntervalInput,
-                  setIntervalValue
-                )
-              }
-              className={`w-24 rounded border px-2 py-1 ${
-                intervalInput === intervalValue ? 'bg-white' : 'bg-red-50'
-              }`}
-            />
-            <select
-              aria-label="Row interval unit"
-              value={intervalUnit}
-              onChange={(e) => setIntervalUnit(e.target.value)}
-              className="rounded border px-2 py-1"
-            >
-              <option value="km/h">kph</option>
-              <option value="mi/h">mph</option>
-            </select>
-          </div>
+        <div className="flex items-center gap-4">
+          <label htmlFor="rowInterval" className="text-md font-medium">
+            Row Interval:
+          </label>
+          <input
+            id="rowInterval"
+            type="number"
+            step="0.1"
+            min="0"
+            value={intervalInput}
+            onChange={(e) =>
+              handleNumericalValidatableChange(
+                e.target.value,
+                parseFloat,
+                setIntervalInput,
+                setIntervalValue
+              )
+            }
+            className={`w-24 rounded border px-2 py-1 ${
+              intervalInput === intervalValue ? 'bg-white' : 'bg-red-50'
+            }`}
+          />
+          <select
+            aria-label="Row interval unit"
+            value={intervalUnit}
+            onChange={(e) => setIntervalUnit(e.target.value)}
+            className="rounded border px-2 py-1"
+          >
+            <option value="km/h">kph</option>
+            <option value="mi/h">mph</option>
+          </select>
+        </div>
 
-          {/* Order Controls */}
-          <div className="flex items-center gap-4">
-            <label className="text-md font-medium">Table Order:</label>
-            <div className="flex flex-wrap gap-4">
-              <label htmlFor="sortDesc" className="flex items-center gap-1">
-                <input
-                  id="sortDesc"
-                  type="radio"
-                  value="descending"
-                  checked={!sortAsc}
-                  onChange={() => setSortAsc(false)}
-                />
-                desc
-              </label>
-              <label htmlFor="sortAsc" className="flex items-center gap-1">
-                <input
-                  id="sortAsc"
-                  type="radio"
-                  value="ascending"
-                  checked={sortAsc}
-                  onChange={() => setSortAsc(true)}
-                />
-                asc
-              </label>
-            </div>
+        {/* Order Controls */}
+        <div className="flex items-center gap-4">
+          <label className="text-md font-medium">Table Order:</label>
+          <div className="flex flex-wrap gap-4">
+            <label htmlFor="sortDesc" className="flex items-center gap-1">
+              <input
+                id="sortDesc"
+                type="radio"
+                value="descending"
+                checked={!sortAsc}
+                onChange={() => setSortAsc(false)}
+              />
+              desc
+            </label>
+            <label htmlFor="sortAsc" className="flex items-center gap-1">
+              <input
+                id="sortAsc"
+                type="radio"
+                value="ascending"
+                checked={sortAsc}
+                onChange={() => setSortAsc(true)}
+              />
+              asc
+            </label>
           </div>
         </div>
-        <div className="flex gap-2 bg-gray-50 p-2 pt-2 print:hidden">
+        <div className="flex gap-2 bg-gray-50 pt-2 print:hidden">
           <button
             onClick={resetPage}
             className="rounded border border-yellow-500 bg-transparent px-4 py-2 text-xs font-medium font-semibold text-yellow-700 hover:border-transparent hover:bg-yellow-500 hover:text-white"
@@ -495,12 +499,12 @@ const PaceCalculator = () => {
       </details>
 
       {displayOverflowMessage && (
-        <div className="p-2 text-right text-sm text-amber-600">
+        <div className="p-1 text-right text-sm text-amber-600">
           Scroll, reduce columns, or go landscape &gt;&gt;&gt;
         </div>
       )}
 
-      <div className={`table-container relative ${hasOverflow && 'overflow-x-scroll'}`}>
+      <div className={`table-container px-1 relative${hasOverflow ? 'overflow-x-scroll' : ''}`}>
         <table
           ref={tableContainer}
           className="min-w-full table-fixed border-collapse overflow-auto text-xs md:text-sm"
@@ -535,7 +539,7 @@ const PaceCalculator = () => {
                     </th>
                   )}
                   {(paceDisplay == 'both' || paceDisplay == 'speed') && (
-                    <th className="border bg-sky-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
+                    <th className="border bg-blue-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
                       Speed
                       <br />
                       [mph]
@@ -586,8 +590,8 @@ const PaceCalculator = () => {
                           hightlightedSpeeds.has(row.kph)
                             ? 'bg-yellow-100'
                             : index % 2 === 0
-                              ? 'bg-teal-50'
-                              : 'bg-teal-100'
+                              ? 'bg-emerald-50'
+                              : 'bg-emerald-100'
                         }`}
                       >
                         {row.minPerKm}
@@ -629,8 +633,8 @@ const PaceCalculator = () => {
                           hightlightedSpeeds.has(row.kph)
                             ? 'bg-yellow-100'
                             : index % 2 === 0
-                              ? 'bg-sky-50'
-                              : 'bg-sky-100'
+                              ? 'bg-blue-50'
+                              : 'bg-blue-100'
                         }`}
                       >
                         {row.mph}
