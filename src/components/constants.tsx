@@ -3,6 +3,7 @@ import { StandardDistance } from './types';
 export const MARATHON_DISTANCE = 42.195;
 export const KM_TO_MILES = 0.621371;
 export const MILE_TO_KM = 1 / KM_TO_MILES;
+export const KPH_TO_MS = 1000 / 3600;
 export const STORAGE_KEY = 'paceCalculatorPreferences';
 
 export const STORAGE_VERSION_KEY = 'storageVersion';
@@ -54,6 +55,7 @@ export const DEFAULT_PREFERENCES = {
   paceDisplay: 'pace',
   paceDisplayUnit: 'both',
   showMs: false,
+  roundMs: false,
   selectedDistances: STANDARD_DISTANCES.filter((d) => d.defaultEnabled).map((d) => d.id),
   emphasizedDistances: STANDARD_DISTANCES.filter((d) => d.important).map((d) => d.id),
   customDistance: {

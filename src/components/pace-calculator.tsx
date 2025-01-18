@@ -8,6 +8,7 @@ import {
   STORAGE_VERSION,
   STANDARD_DISTANCES,
   DEFAULT_PREFERENCES,
+  KPH_TO_MS,
 } from './constants';
 import { formatPace, parsePace, formatTime, resetPage, countDecimals } from './utils';
 import { DistanceNameDisplay } from './ui_helpers';
@@ -44,6 +45,7 @@ const PaceCalculator = () => {
   const [paceBoundsUnit, setpaceBoundsUnit] = useState(() => loadPreferences().paceBoundsUnit);
   const [paceDisplayUnit, setpaceDisplayUnit] = useState(() => loadPreferences().paceDisplayUnit);
   const [showMs, setShowMs] = useState(() => loadPreferences().showMs);
+  const [roundMs, setRoundMs] = useState(() => loadPreferences().roundMs);
   const [paceDisplay, setPaceDisplay] = useState(() => loadPreferences().paceDisplay);
   const [selectedDistances, setSelectedDistances] = useState<Set<string>>(
     () => new Set(loadPreferences().selectedDistances)
@@ -91,6 +93,7 @@ const PaceCalculator = () => {
       maxPaceInput,
       paceBoundsUnit,
       showMs,
+      roundMs,
       paceDisplay,
       paceDisplayUnit,
       selectedDistances: Array.from(selectedDistances),
@@ -118,6 +121,7 @@ const PaceCalculator = () => {
     paceDisplay,
     paceDisplayUnit,
     showMs,
+    roundMs,
     selectedDistances,
     emphasizedDistances,
     customDistance,
@@ -163,20 +167,26 @@ const PaceCalculator = () => {
     if (intervalUnit === 'mi/h') {
       interval = parseFloat(intervalValue) * MILE_TO_KM;
     } else if (intervalUnit === 'km/h') {
-      interval = parseFloat(intervalValue)
-    // m/s
+      interval = parseFloat(intervalValue);
+      // m/s
     } else {
-      interval = parseFloat(intervalValue) * (3600 / 10000);
+      interval = parseFloat(intervalValue) / KPH_TO_MS;
     }
 
     const paceModifier = paceBoundsUnit === 'min/km' ? 1 : MILE_TO_KM;
     const minPaceValueParsed = (60 / parsePace(minPaceValue)) * paceModifier;
-    const maxPaceValueParsed = (60 / parsePace(maxPaceValue)) * paceModifier;
+    let maxPaceValueParsed = (60 / parsePace(maxPaceValue)) * paceModifier;
+
+    if (roundMs) {
+      const baseMPS = Math.round(maxPaceValueParsed * KPH_TO_MS)
+      maxPaceValueParsed = baseMPS / KPH_TO_MS;
+    }
 
     for (let kph = maxPaceValueParsed; kph <= minPaceValueParsed; kph += interval) {
       kph = Number(kph.toFixed(countDecimals(interval)));
 
       const mph = kph * KM_TO_MILES;
+      const mps = kph * KPH_TO_MS;
       const minPerKm = 60 / kph;
       const minPerMile = 60 / mph;
 
@@ -188,9 +198,9 @@ const PaceCalculator = () => {
         3600;
 
       data.push({
-        kph: kph.toFixed(countDecimals(interval)),
-        mph: mph.toFixed(countDecimals(interval)),
-        mps: (kph * (1000 / 360)).toFixed(countDecimals(interval)),
+        kph: kph.toFixed(2),
+        mph: mph.toFixed(2),
+        mps: mps.toFixed(2),
         minPerKm: formatPace(minPerKm * 60),
         minPerMile: formatPace(minPerMile * 60),
         minPerKmRaw: minPerKm,
@@ -200,7 +210,15 @@ const PaceCalculator = () => {
       });
     }
     return data;
-  }, [intervalValue, intervalUnit, customDistance, minPaceValue, maxPaceValue, paceBoundsUnit]);
+  }, [
+    intervalValue,
+    intervalUnit,
+    customDistance,
+    minPaceValue,
+    maxPaceValue,
+    paceBoundsUnit,
+    roundMs,
+  ]);
 
   return (
     <>
@@ -353,6 +371,17 @@ const PaceCalculator = () => {
                   }}
                 />
                 show m/s
+              </label>
+              <label htmlFor="roundOffMps" className="flex items-center gap-1">
+                <input
+                  id="roundOffMps"
+                  type="checkbox"
+                  checked={roundMs}
+                  onChange={() => {
+                    setRoundMs(!roundMs);
+                  }}
+                />
+                round to m/s
               </label>
             </div>
           </div>
