@@ -43,6 +43,7 @@ const PaceCalculator = () => {
 
   const [paceBoundsUnit, setpaceBoundsUnit] = useState(() => loadPreferences().paceBoundsUnit);
   const [paceDisplayUnit, setpaceDisplayUnit] = useState(() => loadPreferences().paceDisplayUnit);
+  const [showMs, setShowMs] = useState(() => loadPreferences().showMs);
   const [paceDisplay, setPaceDisplay] = useState(() => loadPreferences().paceDisplay);
   const [selectedDistances, setSelectedDistances] = useState<Set<string>>(
     () => new Set(loadPreferences().selectedDistances)
@@ -89,6 +90,7 @@ const PaceCalculator = () => {
       minPaceInput,
       maxPaceInput,
       paceBoundsUnit,
+      showMs,
       paceDisplay,
       paceDisplayUnit,
       selectedDistances: Array.from(selectedDistances),
@@ -115,6 +117,7 @@ const PaceCalculator = () => {
     paceBoundsUnit,
     paceDisplay,
     paceDisplayUnit,
+    showMs,
     selectedDistances,
     emphasizedDistances,
     customDistance,
@@ -156,8 +159,16 @@ const PaceCalculator = () => {
   const paceData = useMemo(() => {
     const data = [];
 
-    const interval =
-      intervalUnit === 'mi/h' ? parseFloat(intervalValue) * MILE_TO_KM : parseFloat(intervalValue);
+    let interval;
+    if (intervalUnit === 'mi/h') {
+      interval = parseFloat(intervalValue) * MILE_TO_KM;
+    } else if (intervalUnit === 'km/h') {
+      interval = parseFloat(intervalValue)
+    // m/s
+    } else {
+      interval = parseFloat(intervalValue) * (3600 / 10000);
+    }
+
     const paceModifier = paceBoundsUnit === 'min/km' ? 1 : MILE_TO_KM;
     const minPaceValueParsed = (60 / parsePace(minPaceValue)) * paceModifier;
     const maxPaceValueParsed = (60 / parsePace(maxPaceValue)) * paceModifier;
@@ -179,6 +190,7 @@ const PaceCalculator = () => {
       data.push({
         kph: kph.toFixed(countDecimals(interval)),
         mph: mph.toFixed(countDecimals(interval)),
+        mps: (kph * (1000 / 360)).toFixed(countDecimals(interval)),
         minPerKm: formatPace(minPerKm * 60),
         minPerMile: formatPace(minPerMile * 60),
         minPerKmRaw: minPerKm,
@@ -326,6 +338,26 @@ const PaceCalculator = () => {
           </div>
         </div>
 
+        {/* Additional Unit Controls */}
+        <div className="space-y-2">
+          <div className="ml-4 flex items-center gap-6">
+            <label className="text-sm font-medium">More:</label>
+            <div className="flex items-center gap-4">
+              <label htmlFor="mps" className="flex items-center gap-1">
+                <input
+                  id="mps"
+                  type="checkbox"
+                  checked={showMs}
+                  onChange={() => {
+                    setShowMs(!showMs);
+                  }}
+                />
+                show m/s
+              </label>
+            </div>
+          </div>
+        </div>
+
         {/* Distance Selection */}
         <div className="mt-1 space-y-0">
           <div className="text-md flex items-center font-medium">Show Distances:</div>
@@ -459,6 +491,7 @@ const PaceCalculator = () => {
           >
             <option value="km/h">kph</option>
             <option value="mi/h">mph</option>
+            <option value="m/s">m/s</option>
           </select>
         </div>
 
@@ -504,7 +537,7 @@ const PaceCalculator = () => {
         </div>
       )}
 
-      <div className={`table-container px-1 relative ${hasOverflow ? 'overflow-x-scroll' : ''}`}>
+      <div className={`table-container relative px-1 ${hasOverflow ? 'overflow-x-scroll' : ''}`}>
         <table
           ref={tableContainer}
           className="min-w-full table-fixed border-collapse overflow-auto text-xs md:text-sm"
@@ -546,6 +579,13 @@ const PaceCalculator = () => {
                     </th>
                   )}
                 </>
+              )}
+              {showMs && (
+                <th className="border bg-purple-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
+                  Speed
+                  <br />
+                  [m/s]
+                </th>
               )}
               {STANDARD_DISTANCES.map(
                 (dist) =>
@@ -641,6 +681,19 @@ const PaceCalculator = () => {
                       </td>
                     )}
                   </>
+                )}
+                {showMs && (
+                  <td
+                    className={`"border p-1 py-2 text-center sm:p-2 ${
+                      hightlightedSpeeds.has(row.kph)
+                        ? 'bg-yellow-100'
+                        : index % 2 === 0
+                          ? 'bg-purple-50'
+                          : 'bg-purple-100'
+                    }`}
+                  >
+                    {row.mps}
+                  </td>
                 )}
                 {STANDARD_DISTANCES.map(
                   (dist, i) =>

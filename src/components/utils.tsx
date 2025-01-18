@@ -28,7 +28,7 @@ export const resetPage = () => {
   window.location.reload();
 };
 
-export const countDecimals = function (value: number) {
-  if (Math.floor(value) === value) return 0;
-  return value.toString().split('.')[1].length || 0;
+export const countDecimals = function (value: number, minPlaces: number=2) {
+  if (Math.floor(value) === value) return minPlaces;
+  return Math.max(value.toString().split('.')[1].length, minPlaces) || 0;
 };
