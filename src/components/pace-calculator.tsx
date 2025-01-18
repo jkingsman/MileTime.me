@@ -504,7 +504,7 @@ const PaceCalculator = () => {
         </div>
       )}
 
-      <div className={`table-container px-1 relative${hasOverflow ? 'overflow-x-scroll' : ''}`}>
+      <div className={`table-container px-1 relative ${hasOverflow ? 'overflow-x-scroll' : ''}`}>
         <table
           ref={tableContainer}
           className="min-w-full table-fixed border-collapse overflow-auto text-xs md:text-sm"
