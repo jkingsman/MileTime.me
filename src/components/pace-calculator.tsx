@@ -571,7 +571,7 @@ const PaceCalculator = () => {
           ref={tableContainer}
           className="min-w-full table-fixed border-collapse overflow-auto text-xs md:text-sm"
         >
-          <thead className="sticky -top-1 z-50">
+          <thead className="screen:sticky screen:-top-1 screen:z-50">
             <tr>
               {paceDisplayUnit !== 'mi' && (
                 <>
