@@ -222,7 +222,10 @@ const PaceCalculator = () => {
 
   return (
     <>
-      <div className="bg-gray-50 p-2 px-4 text-4xl print:hidden">MileTime.me</div>
+      <div className="flex flex-col lg:flex-row bg-gray-50 print:hidden">
+        <div className="p-2 px-4 text-4xl">MileTime.me</div>
+        <div className="hidden md:flex md:items-end p-2 px-4 text-xl italic lg:mt-0">Run your numbers: the missing pace & race time converter</div>
+      </div>
       <div className="space-y-4 rounded-lg bg-gray-50 p-2 px-4 print:hidden">
         {/* Pace Controls */}
         <div className="flex flex-wrap gap-4">
@@ -576,14 +579,14 @@ const PaceCalculator = () => {
               {paceDisplayUnit !== 'mi' && (
                 <>
                   {(paceDisplay == 'both' || paceDisplay == 'pace') && (
-                    <th className="border bg-emerald-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
+                    <th className="bg-emerald-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
                       Pace
                       <br />
                       [min/km]
                     </th>
                   )}
                   {(paceDisplay == 'both' || paceDisplay == 'speed') && (
-                    <th className="border bg-sky-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
+                    <th className="bg-sky-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
                       Speed
                       <br />
                       [kph]
@@ -594,14 +597,14 @@ const PaceCalculator = () => {
               {paceDisplayUnit !== 'km' && (
                 <>
                   {(paceDisplay == 'both' || paceDisplay == 'pace') && (
-                    <th className="border bg-teal-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
+                    <th className="bg-teal-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
                       Pace
                       <br />
                       [min/mi]
                     </th>
                   )}
                   {(paceDisplay == 'both' || paceDisplay == 'speed') && (
-                    <th className="border bg-blue-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
+                    <th className="bg-blue-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
                       Speed
                       <br />
                       [mph]
@@ -610,7 +613,7 @@ const PaceCalculator = () => {
                 </>
               )}
               {showMs && (
-                <th className="border bg-purple-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
+                <th className="bg-purple-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
                   Speed
                   <br />
                   [m/s]
