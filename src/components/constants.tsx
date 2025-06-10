@@ -7,7 +7,7 @@ export const KPH_TO_MS = 1000 / 3600;
 export const STORAGE_KEY = 'paceCalculatorPreferences';
 
 export const STORAGE_VERSION_KEY = 'storageVersion';
-export const STORAGE_VERSION = 10;
+export const STORAGE_VERSION = 11;
 
 export const STANDARD_DISTANCES: StandardDistance[] = [
   {
@@ -67,14 +67,15 @@ export const DEFAULT_PREFERENCES = {
   },
 
   // duplicates for validation
-  intervalValue: '0.2',
-  intervalInput: '0.2',
-  minPaceValue: '2:51',
-  minPaceInput: '2:51',
-  maxPaceValue: '8:34',
-  maxPaceInput: '8:34',
+  minPaceValue: '4:00',
+  minPaceInput: '4:00',
+  maxPaceValue: '8:30',
+  maxPaceInput: '8:30',
 
-  intervalUnit: 'km/h',
+  intervalValue: '5',
+  intervalInput: '5',
+  intervalUnit: 'sec/km',
+
   highlightedSpeeds: [],
   sortAsc: true,
 };

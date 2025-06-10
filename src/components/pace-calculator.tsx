@@ -599,7 +599,7 @@ const PaceCalculator = () => {
               )}
               {paceAndSpeedUnitDisplayList.has('m/s') && (
                 <th className="bg-purple-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
-                  Pace
+                  Speed
                   <br />
                   [m/s]
                 </th>
