@@ -38,15 +38,17 @@ const PaceCalculator = () => {
     return DEFAULT_PREFERENCES;
   };
 
+  // value vs input -- lets us keep track of the typed text box contents vs. last valid value separately
   const [minPaceValue, setMinPaceValue] = useState(() => loadPreferences().minPaceValue);
   const [minPaceInput, setMinPaceInput] = useState(() => loadPreferences().minPaceInput);
   const [maxPaceValue, setMaxPaceValue] = useState(() => loadPreferences().maxPaceValue);
   const [maxPaceInput, setMaxPaceInput] = useState(() => loadPreferences().maxPaceInput);
 
   const [paceBoundsUnit, setpaceBoundsUnit] = useState(() => loadPreferences().paceBoundsUnit);
-  const [paceDisplayUnit, setpaceDisplayUnit] = useState(() => loadPreferences().paceDisplayUnit);
-  const [showMs, setShowMs] = useState(() => loadPreferences().showMs);
-  const [paceDisplay, setPaceDisplay] = useState(() => loadPreferences().paceDisplay);
+  const [paceAndSpeedUnitDisplayList, setPaceAndSpeedUnitDisplayList] = useState<Set<string>>(
+    () => new Set(loadPreferences().paceAndSpeedUnitDisplayList)
+  );
+
   const [selectedDistances, setSelectedDistances] = useState<Set<string>>(
     () => new Set(loadPreferences().selectedDistances)
   );
@@ -54,8 +56,11 @@ const PaceCalculator = () => {
     () => new Set(loadPreferences().emphasizedDistances)
   );
   const [customDistance, setCustomDistance] = useState(() => loadPreferences().customDistance);
+
+  // again, separate value vs input
   const [intervalValue, setIntervalValue] = useState(() => loadPreferences().intervalValue);
   const [intervalInput, setIntervalInput] = useState(() => loadPreferences().intervalInput);
+
   const [intervalUnit, setIntervalUnit] = useState(() => loadPreferences().intervalUnit);
   const [hightlightedSpeeds, setHightlightedSpeeds] = useState<Set<string>>(
     () => new Set(loadPreferences().hightlightedSpeeds)
@@ -92,9 +97,7 @@ const PaceCalculator = () => {
       minPaceInput,
       maxPaceInput,
       paceBoundsUnit,
-      showMs,
-      paceDisplay,
-      paceDisplayUnit,
+      paceAndSpeedUnitDisplayList: Array.from(paceAndSpeedUnitDisplayList),
       selectedDistances: Array.from(selectedDistances),
       emphasizedDistances: Array.from(emphasizedDistances),
       customDistance,
@@ -117,9 +120,7 @@ const PaceCalculator = () => {
     minPaceInput,
     maxPaceInput,
     paceBoundsUnit,
-    paceDisplay,
-    paceDisplayUnit,
-    showMs,
+    paceAndSpeedUnitDisplayList,
     selectedDistances,
     emphasizedDistances,
     customDistance,
@@ -323,99 +324,72 @@ const PaceCalculator = () => {
 
         <div className="text-md flex items-center font-medium">Pace/Speed:</div>
 
-        {/* Pace Display Controls */}
-        <div className="ml-4 flex items-center gap-6">
-          <label className="text-sm font-medium">Show:</label>
-          <div className="flex items-center gap-4">
-            <label htmlFor="pace" className="flex items-center gap-1">
-              <input
-                id="pace"
-                type="radio"
-                value="pace"
-                checked={paceDisplay === 'pace'}
-                onChange={(e) => setPaceDisplay(e.target.value)}
-              />
-              pace
-            </label>
-            <label htmlFor="speedDisplay" className="flex items-center gap-1">
-              <input
-                id="speedDisplay"
-                type="radio"
-                value="speed"
-                checked={paceDisplay === 'speed'}
-                onChange={(e) => setPaceDisplay(e.target.value)}
-              />
-              speed
-            </label>
-            <label htmlFor="paceAndSpeed" className="flex items-center gap-1">
-              <input
-                id="paceAndSpeed"
-                type="radio"
-                value="both"
-                checked={paceDisplay === 'both'}
-                onChange={(e) => setPaceDisplay(e.target.value)}
-              />
-              both
-            </label>
-          </div>
-        </div>
-
         {/* Pace Unit Controls */}
-        <div className="space-y-2">
-          <div className="ml-4 flex items-center gap-6">
-            <label className="text-sm font-medium">Units:</label>
-            <div className="flex items-center gap-4">
-              <label htmlFor="paceKm" className="flex items-center gap-1">
-                <input
-                  id="paceKm"
-                  type="radio"
-                  value="km"
-                  checked={paceDisplayUnit === 'km'}
-                  onChange={(e) => setpaceDisplayUnit(e.target.value)}
-                />
-                km
-              </label>
-              <label htmlFor="paceMi" className="flex items-center gap-1">
-                <input
-                  id="paceMi"
-                  type="radio"
-                  value="mi"
-                  checked={paceDisplayUnit === 'mi'}
-                  onChange={(e) => setpaceDisplayUnit(e.target.value)}
-                />
-                mi
-              </label>
-              <label htmlFor="paceBoth" className="flex items-center gap-1">
-                <input
-                  id="paceBoth"
-                  type="radio"
-                  value="both"
-                  checked={paceDisplayUnit === 'both'}
-                  onChange={(e) => setpaceDisplayUnit(e.target.value)}
-                />
-                km+mi
-              </label>
-            </div>
+        <div className="ml-4 flex items-center gap-2">
+          <label className="text-sm font-medium">Pace:</label>
+          <div className="flex items-center gap-4">
+            <label className="flex items-center gap-1">
+              <input
+                aria-label="show min/km"
+                type="checkbox"
+                checked={paceAndSpeedUnitDisplayList.has('min/km')}
+                onChange={() =>
+                  handleSetToggle('min/km', paceAndSpeedUnitDisplayList, setPaceAndSpeedUnitDisplayList)
+                }
+              />
+              min/km
+            </label>
+            <label className="flex items-center">
+              <input
+                aria-label="show min/mi"
+                type="checkbox"
+                checked={paceAndSpeedUnitDisplayList.has('min/mi')}
+                onChange={() =>
+                  handleSetToggle('min/mi', paceAndSpeedUnitDisplayList, setPaceAndSpeedUnitDisplayList)
+                }
+              />
+              min/mi
+            </label>
           </div>
         </div>
 
-        {/* Additional Unit Controls */}
-        <div className="space-y-2">
-          <div className="ml-4 flex items-center gap-6">
-            <label className="text-sm font-medium">More:</label>
-            <div className="flex items-center gap-4">
-              <label htmlFor="mps" className="flex items-center gap-1">
-                <input
-                  id="mps"
-                  type="checkbox"
-                  checked={showMs}
-                  onChange={() => {
-                    setShowMs(!showMs);
-                  }}
-                />
-                show m/s
-              </label>
-            </div>
+        {/* Speed Unit Controls */}
+        <div className="ml-4 flex items-center gap-2">
+          <label className="text-sm font-medium">Speed:</label>
+          <div className="flex items-center gap-4">
+          <label className="flex items-center gap-1">
+              <input
+                aria-label="show kph"
+                type="checkbox"
+                checked={paceAndSpeedUnitDisplayList.has('kph')}
+                onChange={() =>
+                  handleSetToggle('kph', paceAndSpeedUnitDisplayList, setPaceAndSpeedUnitDisplayList)
+                }
+              />
+              kph
+            </label>
+            <label className="flex items-center gap-1">
+              <input
+                aria-label="show mph"
+                type="checkbox"
+                checked={paceAndSpeedUnitDisplayList.has('mph')}
+                onChange={() =>
+                  handleSetToggle('mph', paceAndSpeedUnitDisplayList, setPaceAndSpeedUnitDisplayList)
+                }
+              />
+              mph
+            </label>
+            <label className="flex items-center gap-1">
+              <input
+                aria-label="show m/s"
+                type="checkbox"
+                checked={paceAndSpeedUnitDisplayList.has('m/s')}
+                onChange={() =>
+                  handleSetToggle('m/s', paceAndSpeedUnitDisplayList, setPaceAndSpeedUnitDisplayList)
+                }
+              />
+              m/s
+            </label>
           </div>
         </div>
 
@@ -620,45 +594,38 @@ const PaceCalculator = () => {
         >
           <thead className="screen:sticky screen:-top-1 screen:z-50">
             <tr>
-              {paceDisplayUnit !== 'mi' && (
-                <>
-                  {(paceDisplay == 'both' || paceDisplay == 'pace') && (
-                    <th className="bg-emerald-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
-                      Pace
-                      <br />
-                      [min/km]
-                    </th>
-                  )}
-                  {(paceDisplay == 'both' || paceDisplay == 'speed') && (
-                    <th className="bg-sky-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
-                      Speed
-                      <br />
-                      [kph]
-                    </th>
-                  )}
-                </>
+              {paceAndSpeedUnitDisplayList.has('min/km') && (
+                <th className="bg-emerald-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
+                  Pace
+                  <br />
+                  [min/km]
+                </th>
               )}
-              {paceDisplayUnit !== 'km' && (
-                <>
-                  {(paceDisplay == 'both' || paceDisplay == 'pace') && (
-                    <th className="bg-teal-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
-                      Pace
-                      <br />
-                      [min/mi]
-                    </th>
-                  )}
-                  {(paceDisplay == 'both' || paceDisplay == 'speed') && (
-                    <th className="bg-blue-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
-                      Speed
-                      <br />
-                      [mph]
-                    </th>
-                  )}
-                </>
-              )}
-              {showMs && (
-                <th className="bg-purple-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
+              {paceAndSpeedUnitDisplayList.has('kph') && (
+                <th className="bg-sky-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
                   Speed
+                  <br />
+                  [kph]
+                </th>
+              )}
+
+              {paceAndSpeedUnitDisplayList.has('min/mi') && (
+                <th className="bg-teal-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
+                  Pace
+                  <br />
+                  [min/mi]
+                </th>
+              )}
+              {paceAndSpeedUnitDisplayList.has('mph') && (
+                <th className="bg-blue-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
+                  Speed
+                  <br />
+                  [mph]
+                </th>
+              )}
+              {paceAndSpeedUnitDisplayList.has('m/s') && (
+                <th className="bg-purple-100 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
+                  Pace
                   <br />
                   [m/s]
                 </th>
@@ -698,67 +665,61 @@ const PaceCalculator = () => {
                 }
                 onClick={() => handleSetToggle(row.kph, hightlightedSpeeds, setHightlightedSpeeds)}
               >
-                {paceDisplayUnit !== 'mi' && (
-                  <>
-                    {(paceDisplay == 'both' || paceDisplay == 'pace') && (
-                      <td
-                        className={`"border p-1 py-2 text-center sm:p-2 ${
-                          hightlightedSpeeds.has(row.kph)
-                            ? 'bg-yellow-100'
-                            : index % 2 === 0
-                              ? 'bg-emerald-50'
-                              : 'bg-emerald-100'
-                        }`}
-                      >
-                        {row.minPerKm}
-                      </td>
-                    )}
-                    {(paceDisplay == 'both' || paceDisplay == 'speed') && (
-                      <td
-                        className={`"border p-1 py-2 text-center sm:p-2 ${
-                          hightlightedSpeeds.has(row.kph)
-                            ? 'bg-yellow-100'
-                            : index % 2 === 0
-                              ? 'bg-sky-50'
-                              : 'bg-sky-100'
-                        }`}
-                      >
-                        {row.kph}
-                      </td>
-                    )}
-                  </>
+
+                {paceAndSpeedUnitDisplayList.has('min/km') && (
+                  <td
+                    className={`"border p-1 py-2 text-center sm:p-2 ${
+                      hightlightedSpeeds.has(row.kph)
+                        ? 'bg-yellow-100'
+                        : index % 2 === 0
+                          ? 'bg-emerald-50'
+                          : 'bg-emerald-100'
+                    }`}
+                  >
+                    {row.minPerKm}
+                  </td>
                 )}
-                {paceDisplayUnit !== 'km' && (
-                  <>
-                    {(paceDisplay == 'both' || paceDisplay == 'pace') && (
-                      <td
-                        className={`"border p-1 py-2 text-center sm:p-2 ${
-                          hightlightedSpeeds.has(row.kph)
-                            ? 'bg-yellow-100'
-                            : index % 2 === 0
-                              ? 'bg-teal-50'
-                              : 'bg-teal-100'
-                        }`}
-                      >
-                        {row.minPerMile}
-                      </td>
-                    )}
-                    {(paceDisplay == 'both' || paceDisplay == 'speed') && (
-                      <td
-                        className={`"border p-1 py-2 text-center sm:p-2 ${
-                          hightlightedSpeeds.has(row.kph)
-                            ? 'bg-yellow-100'
-                            : index % 2 === 0
-                              ? 'bg-blue-50'
-                              : 'bg-blue-100'
-                        }`}
-                      >
-                        {row.mph}
-                      </td>
-                    )}
-                  </>
+                {paceAndSpeedUnitDisplayList.has('kph') && (
+                  <td
+                    className={`"border p-1 py-2 text-center sm:p-2 ${
+                      hightlightedSpeeds.has(row.kph)
+                        ? 'bg-yellow-100'
+                        : index % 2 === 0
+                          ? 'bg-sky-50'
+                          : 'bg-sky-100'
+                    }`}
+                  >
+                    {row.kph}
+                  </td>
                 )}
-                {showMs && (
+
+                {paceAndSpeedUnitDisplayList.has('min/mi') && (
+                  <td
+                    className={`"border p-1 py-2 text-center sm:p-2 ${
+                      hightlightedSpeeds.has(row.kph)
+                        ? 'bg-yellow-100'
+                        : index % 2 === 0
+                          ? 'bg-teal-50'
+                          : 'bg-teal-100'
+                    }`}
+                  >
+                    {row.minPerMile}
+                  </td>
+                )}
+                {paceAndSpeedUnitDisplayList.has('mph') && (
+                  <td
+                    className={`"border p-1 py-2 text-center sm:p-2 ${
+                      hightlightedSpeeds.has(row.kph)
+                        ? 'bg-yellow-100'
+                        : index % 2 === 0
+                          ? 'bg-blue-50'
+                          : 'bg-blue-100'
+                    }`}
+                  >
+                    {row.mph}
+                  </td>
+                )}
+                {paceAndSpeedUnitDisplayList.has('m/s') && (
                   <td
                     className={`"border p-1 py-2 text-center sm:p-2 ${
                       hightlightedSpeeds.has(row.kph)

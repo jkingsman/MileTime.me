@@ -7,7 +7,7 @@ export const KPH_TO_MS = 1000 / 3600;
 export const STORAGE_KEY = 'paceCalculatorPreferences';
 
 export const STORAGE_VERSION_KEY = 'storageVersion';
-export const STORAGE_VERSION = 9;
+export const STORAGE_VERSION = 10;
 
 export const STANDARD_DISTANCES: StandardDistance[] = [
   {
@@ -57,9 +57,7 @@ export const INTERVAL_UNITS = {
 
 export const DEFAULT_PREFERENCES = {
   paceBoundsUnit: 'min/km',
-  paceDisplay: 'pace',
-  paceDisplayUnit: 'both',
-  showMs: false,
+  paceAndSpeedUnitDisplayList: ['min/km', 'min/mi'],
   selectedDistances: STANDARD_DISTANCES.filter((d) => d.defaultEnabled).map((d) => d.id),
   emphasizedDistances: STANDARD_DISTANCES.filter((d) => d.important).map((d) => d.id),
   customDistance: {
