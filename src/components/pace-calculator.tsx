@@ -211,6 +211,7 @@ const PaceCalculator = () => {
         3600;
 
       computedData.push({
+        kph_raw: kph,
         kph: kph.toFixed(2),
         mph: mph.toFixed(2),
         mps: mps.toFixed(2),
@@ -603,6 +604,13 @@ const PaceCalculator = () => {
                   [m/s]
                 </th>
               )}
+              {paceAndSpeedUnitDisplayList.size === 0 && (
+                <th className="bg-red-400 p-1 py-2 font-semibold sm:p-2 screen:w-[5vw]">
+                  <i>c</i>
+                  <br />
+                  [lightspeed]
+                </th>
+              )}
               {STANDARD_DISTANCES.map(
                 (dist) =>
                   selectedDistances.has(dist.id) && (
@@ -703,6 +711,19 @@ const PaceCalculator = () => {
                     }`}
                   >
                     {row.mps}
+                  </td>
+                )}
+                {paceAndSpeedUnitDisplayList.size == 0 && (
+                  <td
+                    className={`"border p-1 py-2 text-center sm:p-2 ${
+                      hightlightedSpeeds.has(row.kph)
+                        ? 'bg-yellow-100'
+                        : index % 2 === 0
+                          ? 'bg-red-300'
+                          : 'bg-red-400'
+                    }`}
+                  >
+                    {(row.kph_raw * 9.2656693110598E-10).toFixed(20)}
                   </td>
                 )}
                 {STANDARD_DISTANCES.map(
