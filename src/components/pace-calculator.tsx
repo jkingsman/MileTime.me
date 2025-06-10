@@ -11,7 +11,7 @@ import {
   KPH_TO_MS,
   INTERVAL_UNITS,
 } from './constants';
-import { parsePaceToFractionalMinutes, parsePaceToSeconds, formatTime, resetPage, sigFigCount } from './utils';
+import { handleSetToggle, handleNumericalValidatableChange, parsePaceToFractionalMinutes, parsePaceToSeconds, formatTime, resetPage, sigFigCount } from './utils';
 import { DistanceNameDisplay } from './ui_helpers';
 import { CustomDistance } from './types';
 
@@ -131,34 +131,6 @@ const PaceCalculator = () => {
     sortAsc,
   ]);
 
-  const handleSetToggle = (
-    setKey: string,
-    selectedSet: Set<string>,
-    setter: (value: Set<string>) => void
-  ) => {
-    const newSelected = new Set(selectedSet);
-    if (newSelected.has(setKey)) {
-      newSelected.delete(setKey);
-    } else {
-      newSelected.add(setKey);
-    }
-    setter(newSelected);
-  };
-
-  const handleNumericalValidatableChange = (
-    value: string,
-    validator: (value: string) => number,
-    inputSetter: (value: string) => void,
-    valueSetter: (value: string) => void
-  ) => {
-    inputSetter(value);
-    const parsed = validator(value);
-    if (!isNaN(parsed) && parsed > 0) {
-      valueSetter(value);
-      inputSetter(value);
-    }
-  };
-
   const paceData = useMemo(() => {
     // general form here -- build an array of speeds in kph to display, whether that be derived from a pace interval or a speed interval
     // then expand that speed array into a full data set
@@ -172,24 +144,23 @@ const PaceCalculator = () => {
       // intervals don't convert cleanly between units, so we figure our speeds in the given interval unit (converting the pace range to be in that) then convert to kph if necessary
       if (intervalUnit === 'sec/km') {
         // make sure pace bounds are in seconds/km
-        let paceModifier = paceBoundsUnit === 'min/km' ? 1 : KM_TO_MILES;
+        const paceModifier = paceBoundsUnit === 'min/km' ? 1 : KM_TO_MILES;
         minPaceValueParsedToSeconds = parsePaceToSeconds(minPaceValue) * paceModifier;
         maxPaceValueParsedToSeconds = parsePaceToSeconds(maxPaceValue) * paceModifier;
       } else { // intervalUnit === 'sec/mi'
         // make sure pace bounds are in seconds/mi
-        let paceModifier = paceBoundsUnit === 'min/mi' ? 1 : MILE_TO_KM;
+        const paceModifier = paceBoundsUnit === 'min/mi' ? 1 : MILE_TO_KM;
         minPaceValueParsedToSeconds = parsePaceToSeconds(minPaceValue) * paceModifier;
         maxPaceValueParsedToSeconds = parsePaceToSeconds(maxPaceValue) * paceModifier;
       }
 
       const preliminarySpeedArray = []; // speeds in seconds per distance
-
-      console.log(`minPaceValueParsedToSeconds: ${minPaceValueParsedToSeconds}, maxPaceValueParsedToSeconds: ${maxPaceValueParsedToSeconds}, paceInterval: ${paceInterval}`);
+      // loop through the pace range by the pace interval
       for (let timePerDistance = minPaceValueParsedToSeconds; timePerDistance <= maxPaceValueParsedToSeconds; timePerDistance += paceInterval) {
         preliminarySpeedArray.push(timePerDistance)
       }
-      console.log('preliminarySpeedArray:', preliminarySpeedArray);
 
+      // convert the preliminary speed array to kph
       if (intervalUnit == 'sec/km') {
         // sec/km to kph
         speedArray = preliminarySpeedArray.map((timePerDistance) => (1 / timePerDistance) * 3600);
@@ -212,9 +183,10 @@ const PaceCalculator = () => {
       }
 
       const paceModifier = paceBoundsUnit === 'min/km' ? 1 : MILE_TO_KM;
-      const minPaceValueParsedToSpeed = (60 / parsePaceToFractionalMinutes(minPaceValue)) * paceModifier; // convert min pace to kph
+      const minPaceValueParsedToSpeed = (60 / parsePaceToFractionalMinutes(minPaceValue)) * paceModifier; // convert min/km to kph
       const maxPaceValueParsedToSpeed = (60 / parsePaceToFractionalMinutes(maxPaceValue)) * paceModifier;
 
+      // loop through the speed range by the speed interval
       for (let kph = maxPaceValueParsedToSpeed; kph <= minPaceValueParsedToSpeed; kph += speedInterval) {
         speedArray.push(Number(kph.toFixed(sigFigCount(speedInterval))));
       }
@@ -504,14 +476,15 @@ const PaceCalculator = () => {
             id="rowInterval"
             type="number"
             step={INTERVAL_UNITS.pace.includes(intervalUnit) ? "1" : "0.1"} // pace intervals are in whole seconds, speed intervals can be in tenths
-            min="0"
+            min={INTERVAL_UNITS.pace.includes(intervalUnit) ? "1" : "0.1"} // don't go under zero for seconds
             value={intervalInput}
             onChange={(e) =>
               handleNumericalValidatableChange(
                 e.target.value,
                 parseFloat,
                 setIntervalInput,
-                setIntervalValue
+                setIntervalValue,
+                INTERVAL_UNITS.pace.includes(intervalUnit) ? 1 : 0 // sub-second pace intervals are meaningless in our display, but we allow sub-second speed intervals
               )
             }
             className={`w-24 rounded border px-2 py-1 ${

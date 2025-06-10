@@ -38,3 +38,38 @@ export const sigFigCount = function (value: number, minSigFigs: number=2) {
   if (Math.floor(value) === value) return minSigFigs;
   return Math.max(value.toString().split('.')[1].length, minSigFigs) || 0;
 };
+
+// helper for togglable checkbox sets
+export const handleSetToggle = (
+  setKey: string,
+  selectedSet: Set<string>,
+  setter: (value: Set<string>) => void
+) => {
+  const newSelected = new Set(selectedSet);
+  if (newSelected.has(setKey)) {
+    newSelected.delete(setKey);
+  } else {
+    newSelected.add(setKey);
+  }
+  setter(newSelected);
+};
+
+// helper for numerical inputs -- we accept and display any /input/ that the user provides, but only update the underlying /value/ if it passes validation
+// this gives a nice "invalid" UX without chomping on the user's input while they're typing.
+// accepts the user's value, always sets the /input/ to that, validates it with the provided validator, and if valid, sets the /value/ to that.
+// Also includes a minimum value check as an additional validation so I'm not tempted to write gnarly `(e) => parseFloat(e.target.value) && parseFloat(e.target.value) > 0 ? e.target.value : NaN`
+// May rework this later.
+export const handleNumericalValidatableChange = (
+  value: string,
+  validator: (value: string) => number,
+  inputSetter: (value: string) => void,
+  valueSetter: (value: string) => void,
+  minimumValue: number = 0,
+) => {
+  inputSetter(value);
+  const parsed = validator(value);
+  if (!isNaN(parsed) && parsed > minimumValue) {
+    valueSetter(value);
+    inputSetter(value);
+  }
+};
