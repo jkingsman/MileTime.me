@@ -68,7 +68,7 @@ export const handleNumericalValidatableChange = (
 ) => {
   inputSetter(value);
   const parsed = validator(value);
-  if (!isNaN(parsed) && parsed > minimumValue) {
+  if (!isNaN(parsed) && parsed >= minimumValue) {
     valueSetter(value);
     inputSetter(value);
   }
